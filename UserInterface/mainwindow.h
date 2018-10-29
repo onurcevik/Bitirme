@@ -2,11 +2,14 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QtCore>
+#include <QtGui>
 #include <QMediaPlayer>
-#include <QVideoWidget>
 #include <QFileDialog>
-#include <QVBoxLayout>
-#include "myvideoobject.h"
+#include <QGraphicsScene>
+#include <QGraphicsVideoItem>
+#include "mygraphicsview.h"
+
 
 
 namespace Ui {
@@ -26,11 +29,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-
+    QGraphicsScene *scene;
+    QGraphicsVideoItem *videoItem;
     QMediaPlayer* mediaPlayer;
-    QVideoWidget* videoWidget;
-    MyVideoObject* videoObject;
-
 };
 
 #endif // MAINWINDOW_H

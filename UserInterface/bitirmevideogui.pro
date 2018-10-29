@@ -1,14 +1,14 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2018-10-14T08:42:45
+# Project created by QtCreator 2018-10-29T13:22:28
 #
 #-------------------------------------------------
 
-QT       += core gui widgets multimedia multimediawidgets
+QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets core gui multimedia multimediawidgets
 
-TARGET = tasarimgui
+TARGET = bitirmevideogui
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -27,11 +27,11 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    myvideoobject.cpp
+    mygraphicsview.cpp
 
 HEADERS += \
         mainwindow.h \
-    myvideoobject.h
+    mygraphicsview.h
 
 FORMS += \
         mainwindow.ui
