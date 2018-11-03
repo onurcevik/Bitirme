@@ -1,3 +1,8 @@
+### görüşmeler
+* 3 kasım öncesi
+  * tübitak projesi önerildi, proje planı ve ilk prototip üzerinde çalışılıyor
+  * bir sonraki görüşme: 8 kasım,12:00,grafik lab
+
 # hızlı bağlantılar
 * [tübitak proje raporu önerileri](01-tübitak-proje-raporu.md)
 
