@@ -24,12 +24,13 @@ protected:
     void mousePressEvent(QMouseEvent *ev);
     void mouseReleaseEvent(QMouseEvent *ev);
     void paintEvent(QPaintEvent *ev);
+
+    void getCoordinates(QPoint leftTop, QPoint rightBottom);
 private:
        QRubberBand *rubberBand;
-       QPoint origin;
        QRect rect;
-
        QPoint startPoint, endPoint;
+       bool rectExist = false;
 
 
 

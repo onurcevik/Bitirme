@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QGraphicsScene>
 #include <QGraphicsVideoItem>
+#include <QSize>
 #include "mygraphicsview.h"
 
 
@@ -32,6 +33,7 @@ private:
     QGraphicsScene *scene;
     QGraphicsVideoItem *videoItem;
     QMediaPlayer* mediaPlayer;
+
 };
 
 #endif // MAINWINDOW_H
