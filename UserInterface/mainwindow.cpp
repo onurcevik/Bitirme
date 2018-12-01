@@ -13,12 +13,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QSize videoSize = ui->graphicsView->size();
     videoItem->setSize(videoSize);
 
-    //qDebug()<<"1)scene rect:"<<scene->sceneRect();
-    //qDebug()<<"1)graphics rect:"<<ui->graphicsView->sceneRect();
+
     ui->graphicsView->setScene(scene);
-    //scene->setSceneRect(ui->graphicsView->sceneRect());
-  //  qDebug()<<"2)scene rect:"<<scene->sceneRect();
-    //qDebug()<<"2)graphics rect:"<<ui->graphicsView->sceneRect();
+
     mediaPlayer->setVideoOutput(videoItem);
     ui->graphicsView->scene()->addItem(videoItem);
     ui->graphicsView->show();

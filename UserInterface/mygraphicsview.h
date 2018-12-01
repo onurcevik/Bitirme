@@ -7,6 +7,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QRubberBand>
+
 #include <QPoint>
 #include <QDebug>
 #include <QLabel>
@@ -27,10 +28,11 @@ protected:
 
     void getCoordinates(QPoint leftTop, QPoint rightBottom);
 private:
-       QRubberBand *rubberBand;
+    QRubberBand *rubberBand;
+
        QRect rect;
        QPoint startPoint, endPoint;
-       bool rectExist = false;
+
 
 
 

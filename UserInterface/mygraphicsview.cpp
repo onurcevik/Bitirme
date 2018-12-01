@@ -24,12 +24,6 @@ void MyGraphicsView::mouseMoveEvent(QMouseEvent *ev)
 
 void MyGraphicsView::mouseReleaseEvent(QMouseEvent *ev)
 {
-    if(rectExist)
-    {
-        rect.moveTo(startPoint);
-    }
-
-
     endPoint = ev->pos();
     qDebug()<<"END POINT!: "<<endPoint;
 
@@ -38,9 +32,6 @@ void MyGraphicsView::mouseReleaseEvent(QMouseEvent *ev)
     //update(startPoint.x(),startPoint.y(),rect.width(),rect.height());
     update();
     QGraphicsView::mouseReleaseEvent(ev);
-
-    rectExist = true;
-
 
 }
 
@@ -52,8 +43,7 @@ void MyGraphicsView::paintEvent(QPaintEvent *ev)
     QPainter painter(this->viewport());
 
 
-    //painter.fillRect(rect, QBrush(QColor(128, 128, 255, 0)));
-    painter.setBrush(Qt::red);
+    painter.setBrush(QBrush(QColor(255,0,0,0)));
      if(!rect.isNull()){
           painter.drawRect(rect);
      }
