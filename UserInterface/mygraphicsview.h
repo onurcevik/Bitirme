@@ -24,18 +24,14 @@ protected:
     void mouseMoveEvent(QMouseEvent *ev);
     void mousePressEvent(QMouseEvent *ev);
     void mouseReleaseEvent(QMouseEvent *ev);
-    void paintEvent(QPaintEvent *ev);
+
 
     void getCoordinates(QPoint leftTop, QPoint rightBottom);
+signals:
+    void giveCoordinates(int x1,int y1,int x2,int y2);
 private:
     QRubberBand *rubberBand;
-
-       QRect rect;
-       QPoint startPoint, endPoint;
-
-
-
-
+    QPoint startPoint, endPoint;
 };
 
 #endif // MYGRAPHICSVIEW_H

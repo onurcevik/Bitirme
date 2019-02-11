@@ -1,14 +1,14 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2018-10-29T13:22:28
+# Project created by QtCreator 2018-12-22T17:05:43
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets core gui multimedia multimediawidgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = bitirmevideogui
+TARGET = TCPSender
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -22,35 +22,24 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp \
-        mygraphicsview.cpp \
-        reciever.cpp \
+        tcpsender.cpp \
+        camera.cpp \
         decryption.cpp \
         encryption.cpp \
         keygenerator.cpp \
-        tables.cpp \
+        tables.cpp
+
+
+HEADERS += \
+        tcpsender.h \
+        camera.h \
         decryption.h \
         encryption.h \
         keygenerator.h \
-        tables.h \
-    canny.cpp \
-    tracking.cpp
-
-HEADERS += \
-        mainwindow.h \
-    mygraphicsview.h \
-    reciever.h \
-    canny.h \
-    tracking.h
+        tables.h
 
 FORMS += \
-        mainwindow.ui
-
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
+        tcpsender.ui

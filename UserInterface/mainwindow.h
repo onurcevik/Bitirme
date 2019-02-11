@@ -4,13 +4,15 @@
 #include <QMainWindow>
 #include <QtCore>
 #include <QtGui>
-#include <QMediaPlayer>
-#include <QFileDialog>
+#include <QTime>
 #include <QGraphicsScene>
-#include <QGraphicsVideoItem>
-#include <QSize>
+#include<QGraphicsPixmapItem>
+#include <QBuffer>
 #include "mygraphicsview.h"
-
+#include "reciever.h"
+#include "decryption.h"
+#include "canny.h"
+#include "tracking.h"
 
 
 namespace Ui {
@@ -23,16 +25,30 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
+
     ~MainWindow();
 
-private slots:
-    void on_actionOpen_triggered();
+
+public slots:
+    void updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes);
+    void setProcessingSettings(int x1,int y1,int x2,int y2);
 
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
-    QGraphicsVideoItem *videoItem;
-    QMediaPlayer* mediaPlayer;
+    QGraphicsPixmapItem *item;
+    QImage *img;
+    Reciever *server;
+    Tracking *tracking1;
+    Tracking *tracking2;
+    Canny *nesne1;
+    int firstFrame=0;
+    int imageProcessing=0;
+    int coordinat[4]={0,0,0,0};
+    int tmpcoordinat[4]={0,0,0,0};
+    QTime time;
+
+
 
 };
 
