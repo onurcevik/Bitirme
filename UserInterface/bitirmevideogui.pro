@@ -38,14 +38,16 @@ SOURCES += \
         keygenerator.h \
         tables.h \
     canny.cpp \
-    tracking.cpp
+    tracking.cpp \
+    meanshifttracker.cpp
 
 HEADERS += \
         mainwindow.h \
     mygraphicsview.h \
     reciever.h \
     canny.h \
-    tracking.h
+    tracking.h \
+    meanshifttracker.h
 
 FORMS += \
         mainwindow.ui
