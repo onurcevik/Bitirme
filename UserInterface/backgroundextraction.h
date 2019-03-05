@@ -14,7 +14,7 @@ private:
 public:
     BackgroundExtraction();
     ~BackgroundExtraction();
-    void set(BYTE inputImg, int width, int height, int numberOfFrame);
+    void set(BYTE *inputImg, int width, int height, int numberOfFrame);
     int medianCalculator();
     void dilation();
     void erosion();
