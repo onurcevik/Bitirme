@@ -9,6 +9,7 @@ private:
     int height;
     int numberOfFrame;
     BYTE *arr;
+    BYTE *histogramArr;
     BYTE *outputImg;
 
 public:
@@ -16,10 +17,11 @@ public:
     ~BackgroundExtraction();
     void set(BYTE *inputImg, int width, int height, int numberOfFrame);
     int medianCalculator();
+    void histogram();
     void dilation();
     void erosion();
     void otsu();
 
 
-}
+};
 #endif // BACKGROUNDEXTRACTION_H
