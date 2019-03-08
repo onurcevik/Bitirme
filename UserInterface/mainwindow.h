@@ -13,6 +13,7 @@
 #include "decryption.h"
 #include "canny.h"
 #include "tracking.h"
+#include "backgroundextraction.h"
 
 
 namespace Ui {
@@ -48,6 +49,8 @@ private:
     int tmpcoordinat[4]={0,0,0,0};
     QTime time;
 
+    BackgroundExtraction *background;
+    int frameNumber=1;
 
 
 };

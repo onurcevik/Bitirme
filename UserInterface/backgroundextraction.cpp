@@ -3,6 +3,8 @@
 #include <iostream>
 #include <string.h>
 using namespace std;
+
+
 BackgroundExtraction::BackgroundExtraction()
 {
     inputImg = nullptr;
@@ -15,16 +17,25 @@ BackgroundExtraction::~BackgroundExtraction()
     delete []outputImg;
 }
 
-void BackgroundExtraction::set(BYTE *inputImg, int width, int height, int numberOfFrame)
+BackgroundExtraction::BackgroundExtraction(int width, int height, int numberOfFrame)
 {
-    this->inputImg = inputImg;
     this->width = width;
     this->height = height;
     this->numberOfFrame = numberOfFrame;
+    inputImg = new BYTE[width*height*numberOfFrame];
     arr = new BYTE[numberOfFrame];
     histogramArr = new BYTE[256];
     outputImg = new BYTE[width*height];
 
+}
+
+void BackgroundExtraction::setInputImgs(BYTE *inputImgs, int frameNumber)
+{
+    int n = (frameNumber-1)*(width*height);
+    for(int i=0; i<height*width; i++)
+    {
+        inputImg[n+i]=inputImgs[i];
+    }
 }
 int BackgroundExtraction::medianCalculator()
 {
@@ -176,4 +187,91 @@ void BackgroundExtraction::otsu()
             outputImg[i] = 0;
     }
 
+}
+
+int BackgroundExtraction::backgroundExtraction()
+{
+    //median calculator
+    int n;
+    for(int i=0; i<width*height; i++)
+    {
+        for(int j=0; j<numberOfFrame; j++)
+        {
+            n = j*(width*height);
+            int a=inputImg[n+i];
+            arr[j]=inputImg[n+i];
+        }
+         outputImg[i] = medianCalculator();
+         int b=outputImg[i];
+    }
+}
+
+BYTE *BackgroundExtraction::getInputImg() const
+{
+    return inputImg;
+}
+
+void BackgroundExtraction::setInputImg(BYTE *value)
+{
+    inputImg = value;
+}
+
+int BackgroundExtraction::getWidth() const
+{
+    return width;
+}
+
+void BackgroundExtraction::setWidth(int value)
+{
+    width = value;
+}
+
+int BackgroundExtraction::getHeight() const
+{
+    return height;
+}
+
+void BackgroundExtraction::setHeight(int value)
+{
+    height = value;
+}
+
+int BackgroundExtraction::getNumberOfFrame() const
+{
+    return numberOfFrame;
+}
+
+void BackgroundExtraction::setNumberOfFrame(int value)
+{
+    numberOfFrame = value;
+}
+
+BYTE *BackgroundExtraction::getArr() const
+{
+    return arr;
+}
+
+void BackgroundExtraction::setArr(BYTE *value)
+{
+    arr = value;
+}
+
+BYTE *BackgroundExtraction::getHistogramArr() const
+{
+    return histogramArr;
+}
+
+void BackgroundExtraction::setHistogramArr(BYTE *value)
+{
+    histogramArr = value;
+}
+
+BYTE *BackgroundExtraction::getOutputImg() const
+{
+    return outputImg;
+}
+
+void BackgroundExtraction::setOutputImg(BYTE *value)
+{
+    outputImg = value;
 }
