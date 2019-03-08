@@ -8,6 +8,7 @@
 #include <QTimer>
 #include <camera.h>
 #include "encryption.h"
+#include "testscreen.h"
 
 class QLabel;
 class QPushButton;
@@ -27,7 +28,10 @@ public:
 private slots:
     void startConnection();
     void startSending();
+    void startTestTimer();
     void sendFrame();
+
+    void testCamera();
 
 private:
     Ui::TCPSender *ui;
@@ -35,9 +39,10 @@ private:
     QPushButton *startButton = nullptr;
     QTcpSocket *socket = nullptr;
     QTime time;
-    QTimer timer;
+    QTimer timer, testTimer;
     QImage *image;
     Camera *camera;
+    TestScreen testScreen;
 };
 
 #endif // TCPSENDER_H
