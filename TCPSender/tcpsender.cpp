@@ -22,14 +22,19 @@ TCPSender::TCPSender(QWidget *parent) :
     statusLabel->setWordWrap(true);
     startButton = new QPushButton(tr("&Start"));
     auto quitButton = new QPushButton(tr("&Quit"));
+    auto testButton = new QPushButton(tr("&Test Camera"));
     auto buttonBox = new QDialogButtonBox;
     buttonBox->addButton(startButton, QDialogButtonBox::ActionRole);
+    buttonBox->addButton(testButton, QDialogButtonBox::ActionRole);
     buttonBox->addButton(quitButton, QDialogButtonBox::RejectRole);
 
     socket = new QTcpSocket(this);
     connect(startButton, &QPushButton::clicked, this, &TCPSender::startConnection);
     connect(quitButton, &QPushButton::clicked, this, &TCPSender::close);
+    connect(testButton, &QPushButton::clicked, this, &TCPSender::startTestTimer);
+    connect(&testTimer, &QTimer::timeout, this, &TCPSender::testCamera);
     connect(socket, SIGNAL(connected()), SLOT(startSending()));
+    //connect(&testScreen, SIGNAL(), SLOT(startSending()));
     connect(&timer, &QTimer::timeout, this, &TCPSender::sendFrame);
 
 
@@ -40,7 +45,6 @@ TCPSender::TCPSender(QWidget *parent) :
 
     setWindowTitle(tr("Broadcast Sender"));
     camera = new Camera("/dev/video0", XRES, YRES);
-
     time = QTime::currentTime();
 
 }
@@ -48,6 +52,7 @@ TCPSender::TCPSender(QWidget *parent) :
 TCPSender::~TCPSender()
 {
     delete ui;
+    testScreen.close();
 }
 
 void TCPSender::startConnection()
@@ -71,6 +76,11 @@ void TCPSender::startSending()
     startButton->setEnabled(false);
     //timer.start(1000/(24*1800));
     timer.start(1000/48);
+}
+
+void TCPSender::startTestTimer()
+{
+    testTimer.start(1000/24);
 }
 
 void TCPSender::sendFrame()
@@ -119,4 +129,12 @@ void TCPSender::sendFrame()
 
     startConnection();
 
+}
+
+void TCPSender::testCamera()
+{
+    testScreen.show();
+    auto frame = camera->frame();
+    testScreen.setRGB24(frame.data,XRES,YRES);
+    //startTestTimer();
 }
