@@ -38,17 +38,20 @@ SOURCES += \
         keygenerator.h \
         tables.h \
     canny.cpp \
-    tracking.cpp
+    tracking.cpp \
+    testscreen.cpp
 
 HEADERS += \
         mainwindow.h \
     mygraphicsview.h \
     reciever.h \
     canny.h \
-    tracking.h
+    tracking.h \
+    testscreen.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    testscreen.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
