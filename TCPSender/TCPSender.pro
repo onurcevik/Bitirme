@@ -30,7 +30,8 @@ SOURCES += \
         decryption.cpp \
         encryption.cpp \
         keygenerator.cpp \
-        tables.cpp
+        tables.cpp \
+    testscreen.cpp
 
 
 HEADERS += \
@@ -39,7 +40,9 @@ HEADERS += \
         decryption.h \
         encryption.h \
         keygenerator.h \
-        tables.h
+        tables.h \
+    testscreen.h
 
 FORMS += \
-        tcpsender.ui
+        tcpsender.ui \
+    testscreen.ui
