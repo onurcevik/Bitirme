@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <iostream>
 #include <string.h>
+#include <QDebug>
 using namespace std;
 
 
@@ -39,8 +40,7 @@ void BackgroundExtraction::setInputImgs(BYTE *inputImgs, int frameNumber)
 }
 int BackgroundExtraction::medianCalculator()
 {
-    int n = sizeof(arr)/sizeof(arr[0]);
-    sort(arr, arr+n);
+    sort(arr, arr+numberOfFrame);
     return arr[numberOfFrame/2];
 }
 
@@ -198,11 +198,11 @@ int BackgroundExtraction::backgroundExtraction()
         for(int j=0; j<numberOfFrame; j++)
         {
             n = j*(width*height);
-            int a=inputImg[n+i];
+
             arr[j]=inputImg[n+i];
+
         }
-         outputImg[i] = medianCalculator();
-         int b=outputImg[i];
+         outputImg[i] = medianCalculator(); 
     }
 }
 
