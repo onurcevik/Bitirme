@@ -35,7 +35,9 @@ MainWindow::MainWindow(QWidget *parent) :
     tracking2 = new Tracking();
     nesne1 =new Canny();
     time = QTime::currentTime();
-    background = new BackgroundExtraction(640,480,5);
+    background = new BackgroundExtraction(640,480,50);
+
+
 
 
 }
@@ -74,7 +76,7 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
 
        background->setInputImgs(imgData,frameNumber);
        frameNumber++;
-       if(frameNumber>5)
+       if(frameNumber>50)
        {
          background->backgroundExtraction();
          frameNumber=1;
