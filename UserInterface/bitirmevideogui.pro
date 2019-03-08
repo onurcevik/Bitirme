@@ -39,6 +39,7 @@ SOURCES += \
         tables.h \
     canny.cpp \
     tracking.cpp \
+    backgroundextraction.cpp \
     testscreen.cpp
 
 HEADERS += \
@@ -47,7 +48,9 @@ HEADERS += \
     reciever.h \
     canny.h \
     tracking.h \
+    backgroundextraction.h \
     testscreen.h
+
 
 FORMS += \
         mainwindow.ui \

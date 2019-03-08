@@ -4,6 +4,9 @@
 #include <QImage>
 #include <QDebug>
 #include<QPixmap>
+#include <string>
+#include <iostream>
+using namespace std;
 
 #define XRES 640
 #define YRES 480
@@ -32,6 +35,8 @@ MainWindow::MainWindow(QWidget *parent) :
     tracking2 = new Tracking();
     nesne1 =new Canny();
     time = QTime::currentTime();
+    background = new BackgroundExtraction(640,480,5);
+
 
 }
 
@@ -67,7 +72,14 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
        BYTE *imgData =(unsigned char*)imageBuffer->data().data();
        imgData+=1078;
 
-
+       background->setInputImgs(imgData,frameNumber);
+       frameNumber++;
+       if(frameNumber>5)
+       {
+         background->backgroundExtraction();
+         frameNumber=1;
+      }
+      //imgData = background->getOutputImg();
 
        if(firstFrame==1)
        {
