@@ -39,7 +39,9 @@ SOURCES += \
         tables.h \
     canny.cpp \
     tracking.cpp \
-    meanshifttracker.cpp
+    meanshifttracker.cpp \
+    backgroundextraction.cpp \
+    testscreen.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -47,10 +49,14 @@ HEADERS += \
     reciever.h \
     canny.h \
     tracking.h \
-    meanshifttracker.h
+    meanshifttracker.h \
+    backgroundextraction.h \
+    testscreen.h
+
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    testscreen.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
