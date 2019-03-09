@@ -35,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
     tracking2 = new Tracking();
     nesne1 =new Canny();
     time = QTime::currentTime();
-    background = new BackgroundExtraction(640,480,50);
+    background = new BackgroundExtraction(640,480,10);
     deneme = new TestScreen;
 
 
@@ -77,17 +77,26 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
 
        background->setInputImgs(imgData,frameNumber);
        frameNumber++;
-       if(frameNumber>50)
+       if(frameNumber>10)
        {
          background->backgroundExtraction();
          frameNumber=1;
-      }
+       }
+
+//       BYTE *deneme = new BYTE[640*480];
+//       deneme = background->getOutputImg();
+//       for(int i=0; i<640*480; i++)
+//       {
+//           imgData[i]=fabs(background->getBackgroundImg()[i]-imgData[i]);
+//       }
+
+       background->setForeground(imgData);
+       background->otsu();
+       background->erosion();
+       background->dilation();
+
        deneme->show();
-       deneme->setGrayscale(background->getOutputImg(),XRES,YRES);
-      //imgData = background->getOutputImg();
-
-
-
+       deneme->setGrayscale(background->getBinaryOutputImg(),XRES,YRES);
 
 
        if(firstFrame==1)
