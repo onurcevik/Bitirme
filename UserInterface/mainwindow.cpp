@@ -36,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     nesne1 =new Canny();
     time = QTime::currentTime();
     background = new BackgroundExtraction(640,480,50);
+    deneme = new TestScreen;
 
 
 
@@ -81,7 +82,13 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
          background->backgroundExtraction();
          frameNumber=1;
       }
+       deneme->show();
+       deneme->setGrayscale(background->getOutputImg(),XRES,YRES);
       //imgData = background->getOutputImg();
+
+
+
+
 
        if(firstFrame==1)
        {
