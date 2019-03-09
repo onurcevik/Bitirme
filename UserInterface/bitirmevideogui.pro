@@ -39,6 +39,7 @@ SOURCES += \
         tables.h \
     canny.cpp \
     tracking.cpp \
+    meanshifttracker.cpp \
     backgroundextraction.cpp \
     testscreen.cpp
 
@@ -48,6 +49,7 @@ HEADERS += \
     reciever.h \
     canny.h \
     tracking.h \
+    meanshifttracker.h \
     backgroundextraction.h \
     testscreen.h
 

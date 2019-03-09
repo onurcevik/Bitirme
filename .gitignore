@@ -47,7 +47,9 @@
 
 # Linux trash folder which might appear on any partition or disk
 .Trash-*
+
 .directory
+
 # .nfs files are created when an open file is removed but is still being accessed
 .nfs*
 
@@ -121,5 +123,4 @@ compile_commands.json
 # Qt Creator backups
 
 # End of https://www.gitignore.io/api/qt,c++,linux,qtcreator
- 
- 
+
