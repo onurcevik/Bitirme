@@ -1,19 +1,29 @@
 #ifndef MEANSHIFTTRACKER_H
 #define MEANSHIFTTRACKER_H
+
 #include <stdint.h>
+#include <math.h>
+#include <algorithm>
 
 class MeanShiftTracker
 {
-    double *pdfOfTarget;
+    double *originalPdf, *pdfOfTarget;
+    double gradiant[2]{0};
+    uint8_t *frame;
+    int x1, y1, x2, y2, height, width;
 public:
-    MeanShiftTracker() = default;
-    void calcPdfOfTarget();
-    double* calcGradient();
-    double bhattacharyyaCoefficient();
-    double gaussianKernel();
-    double derivativeOfGaussianKernel();
-    int kroneckerDelta();
-    double* tracking(uint8_t t0, uint8_t t1);
+    MeanShiftTracker();
+    ~MeanShiftTracker();
+    void setFrame(int width, int height, uint8_t* frame);
+    void setArea(int x1, int y1, int x2, int y2);
+    void calcOriginalPdf();
+    void calcPdfOfTarget(int x, int y, double *pdf);
+    void calcGradient(uint8_t *t1);
+    double bhattacharyyaCoefficient(double *p, double *q);
+    double gaussianKernel(double value);
+    double derivativeOfGaussianKernel(double value);
+    int kroneckerDelta(int value);
+    void tracking(uint8_t *t0, uint8_t *t1, double *points);
 };
 
 #endif // MEANSHIFTTRACKER_H
