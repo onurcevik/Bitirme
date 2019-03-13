@@ -73,6 +73,10 @@ void BackgroundExtraction::setForeground(BYTE *inputImg)
 {
     for(int i=0; i<height*width; i++)
     {
+//        if(fabs(backgroundImg[i]-inputImg[i])==0)
+//            binaryOutputImg[i]=0;
+//        else
+//            binaryOutputImg[i]=inputImg[i];
         binaryOutputImg[i]=fabs(backgroundImg[i]-inputImg[i]);
     }
 }

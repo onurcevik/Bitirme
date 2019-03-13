@@ -35,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
     tracking2 = new Tracking();
     nesne1 =new Canny();
     time = QTime::currentTime();
-    background = new BackgroundExtraction(640,480,10);
+    background = new BackgroundExtraction(640,480,50);
     deneme = new TestScreen;
 
 
@@ -54,34 +54,46 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
     imageBuffer->seek(imageBuffer->pos() - bytes);
     int speed = time.msecsTo(QTime::currentTime());
     time = QTime::currentTime();
-    speed = 1000*300/speed;
+    speed = 1000*(imageBuffer->data().size()/1024)/speed;
     ui->label->setText(QString("%1 kb/s").arg(speed));
 //    ui->label_2->setText(QString("%1 fps").arg(speed/300));
     if(ui->radioButton->isChecked())
-    {
-        uint8_t key[16] = {'a', 'y', 's', 'e', 't', 'a', 't', 'i', 'l', 'e', 'c', 'i', 'k', 's','i', 'n'};
-        uint8_t *dataPointer = (uint8_t*)imageBuffer->data().data();
-        dataPointer+=1078;
-        Decryption de(dataPointer,key,128);
-        for(int i=0;i<640*480;i+=16)
-        {
-            de.fastDecrypt();
-            dataPointer+=16;
-            de.setMessage(dataPointer);
-        }
-    }
+           {
+               uint8_t key[16] = {'a', 'y', 's', 'e', 't', 'a', 't', 'i', 'l', 'e', 'c', 'i', 'k', 's','i', 'n'};
+               uint8_t *dataPointer = (uint8_t*)imageBuffer->data().data();
+               dataPointer+=2;
+               Decryption de(dataPointer,key,128);
+               for(int i=0;i<(imageBuffer->data().size()-4)/16;i+=16)
+               {
+                   de.fastDecrypt();
+                   dataPointer+=16;
+                   de.setMessage(dataPointer);
+               }
+       }
     //+++++++++++++++++++++++++++++++++++GORUNTU ISLEM BASLANGIC++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-       BYTE *imgData =(unsigned char*)imageBuffer->data().data();
+    QPixmap pix;
+    pix.loadFromData((unsigned char*)imageBuffer->data().data(), imageBuffer->data().size(), "JPG");
+    QImage im = pix.toImage();
+    im = im.convertToFormat(QImage::Format_Grayscale8);
+    QByteArray ba;
+    QBuffer buffer(&ba);
+    im.save(&buffer,"BMP");
+
+       BYTE *imgData =(unsigned char*)ba.data();
        imgData+=1078;
 
-       background->setInputImgs(imgData,frameNumber);
-       frameNumber++;
-       if(frameNumber>10)
-       {
-         background->backgroundExtraction();
-         frameNumber=1;
-       }
+//       if(a==0){
+//           background->setInputImgs(imgData,frameNumber);
+//           frameNumber++;
+//       }
+
+//       if(frameNumber>50 && a==0)
+//       {
+//         background->backgroundExtraction();
+//         a=1;
+//         //frameNumber=1;
+//       }
 
 //       BYTE *deneme = new BYTE[640*480];
 //       deneme = background->getOutputImg();
@@ -90,13 +102,13 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
 //           imgData[i]=fabs(background->getBackgroundImg()[i]-imgData[i]);
 //       }
 
-       background->setForeground(imgData);
-       background->otsu();
-       background->erosion();
-       background->dilation();
+//       background->setForeground(imgData);
+// //       background->otsu();
+// //       background->erosion();
+// //       background->dilation();
 
-       deneme->show();
-       deneme->setGrayscale(background->getBinaryOutputImg(),XRES,YRES);
+//       deneme->show();
+//       deneme->setGrayscale(background->getBinaryOutputImg(),XRES,YRES);
 
 
        if(firstFrame==1)
@@ -171,7 +183,7 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
 
 
     //QImage img;
-    img->loadFromData(imageBuffer->buffer());
+    img->loadFromData(ba);
     QPixmap pixmap = QPixmap::fromImage(*img);
     item->setPixmap(pixmap);
 

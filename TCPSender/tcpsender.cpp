@@ -87,46 +87,34 @@ void TCPSender::sendFrame()
 {
     if(socket->state()==QAbstractSocket::ConnectedState){
         auto frame = camera->frame();
-//        for(int i=0;i<SIZE;i+=512)
-//        {
-//            int a = socket->writeDatagram((char *)frame.data+i,512,QHostAddress::LocalHost,45454);
-//             qDebug()<<i/512<<" sent"<<a<<" buffer:"<<SIZE;
-//        }
-//
+
+
         image = new QImage(frame.data,XRES,YRES,QImage::Format_RGB888);
         QImage im = image->convertToFormat(QImage::Format_Grayscale8);
         QByteArray ba;
         QBuffer buffer(&ba);
-//        image->save(&buffer,"BMP");
-        im.save(&buffer,"BMP");
+        im.save(&buffer,"JPEG");
+        qDebug()<<ba.size();
+
         uint8_t key[16] = {'a', 'y', 's', 'e', 't', 'a', 't', 'i', 'l', 'e', 'c', 'i', 'k', 's','i', 'n'};
-        uint8_t* dataPointer = (uint8_t*)ba.data();
-        dataPointer+=1078;
-        Encryption en(dataPointer,key,128);
-        for(int i=0;i<640*480;i+=16)
-        {
-            en.fastEncrypt();
-            dataPointer+=16;
-            en.setMessage(dataPointer);
-        }
+               uint8_t* dataPointer = (uint8_t*)ba.data();
+               dataPointer+=2;
+               Encryption en(dataPointer,key,128);
+               for(int i=0;i<(ba.size()-4)/16;i+=16)
+               {
+                   en.fastEncrypt();
+                   dataPointer+=16;
+                   en.setMessage(dataPointer);
+       }
+
         socket->write(ba);
         int speed = time.msecsTo(QTime::currentTime());
         time = QTime::currentTime();
-        speed = 1000*300/speed;
+        speed = 1000*(ba.size()/1024)/speed;
         ui->label->setText(QString("%1 kb/s").arg(speed));
         delete image;
 
-//        for(int i=0;i<SIZE;i+=512)
-//        {
-
-//            int a= socket->write((char *)frame.data+i,512);
-//             qDebug()<<i/512<<" sent"<<a<<" buffer:"<<SIZE;
-//        }
-//    } else {
-//        qDebug()<<"baglanti yok";
-
    }
-
     startConnection();
 
 }
