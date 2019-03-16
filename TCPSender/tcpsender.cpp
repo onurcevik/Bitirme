@@ -94,7 +94,7 @@ void TCPSender::sendFrame()
         QByteArray ba;
         QBuffer buffer(&ba);
         im.save(&buffer,"JPEG");
-        qDebug()<<ba.size();
+        //qDebug()<<ba.size();
 
         uint8_t key[16] = {'a', 'y', 's', 'e', 't', 'a', 't', 'i', 'l', 'e', 'c', 'i', 'k', 's','i', 'n'};
                uint8_t* dataPointer = (uint8_t*)ba.data();

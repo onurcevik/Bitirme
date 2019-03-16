@@ -73,18 +73,16 @@ void BackgroundExtraction::setForeground(BYTE *inputImg)
 {
     for(int i=0; i<height*width; i++)
     {
-//        if(fabs(backgroundImg[i]-inputImg[i])==0)
-//            binaryOutputImg[i]=0;
-//        else
-//            binaryOutputImg[i]=inputImg[i];
-        binaryOutputImg[i]=fabs(backgroundImg[i]-inputImg[i]);
+        binaryOutputImg[i]=(fabs(backgroundImg[i]-inputImg[i]));
     }
 }
 void BackgroundExtraction::histogram()
 {
-    histogramArr[256] = {0};
+    //histogramArr[256] = {0};
+    for(int i=0; i < 256; i++)
+        histogramArr[i]=0;
 
-    for (int j = 0; j <= width * height; j++)
+    for (int j = 0; j< width * height; j++)
     {
         histogramArr[binaryOutputImg[j]]++;
     }
@@ -154,6 +152,7 @@ void BackgroundExtraction::otsu()
             threshold = i;
         }
     }
+    qDebug()<<threshold;
 
     //BINARY IMG
     for (int i=0; i<width*height; i++)

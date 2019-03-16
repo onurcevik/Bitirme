@@ -70,8 +70,8 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
                    de.setMessage(dataPointer);
                }
        }
-    //+++++++++++++++++++++++++++++++++++GORUNTU ISLEM BASLANGIC++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+    //++++++++++++++++++++++++++++++++ARKA PLAN CIKARMA ISLEMLERI++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     QPixmap pix;
     pix.loadFromData((unsigned char*)imageBuffer->data().data(), imageBuffer->data().size(), "JPG");
     QImage im = pix.toImage();
@@ -80,42 +80,44 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
     QBuffer buffer(&ba);
     im.save(&buffer,"BMP");
 
-       BYTE *imgData =(unsigned char*)ba.data();
-       imgData+=1078;
+   BYTE *imgData =(unsigned char*)ba.data();
+   imgData+=1078;
 
-//       if(a==0){
-//           background->setInputImgs(imgData,frameNumber);
-//           frameNumber++;
-//       }
+       if(a==0){
+           background->setInputImgs(imgData,frameNumber);
+           frameNumber++;
+       }
 
-//       if(frameNumber>50 && a==0)
-//       {
-//         background->backgroundExtraction();
-//         a=1;
-//         //frameNumber=1;
-//       }
+       if(frameNumber>50 && a==0)
+       {
+         background->backgroundExtraction();
+         a=1;
+         //frameNumber=1;
+       }
+      if(a==1)
+      {
+          background->setForeground(imgData);
+          background->otsu();
+          background->erosion();
+          background->dilation();
 
-//       BYTE *deneme = new BYTE[640*480];
-//       deneme = background->getOutputImg();
-//       for(int i=0; i<640*480; i++)
-//       {
-//           imgData[i]=fabs(background->getBackgroundImg()[i]-imgData[i]);
-//       }
+      }
 
-//       background->setForeground(imgData);
-// //       background->otsu();
-// //       background->erosion();
-// //       background->dilation();
 
-//       deneme->show();
-//       deneme->setGrayscale(background->getBinaryOutputImg(),XRES,YRES);
+       deneme->show();
+       deneme->setGrayscale(background->getBinaryOutputImg(),XRES,YRES);
+
+
+    //+++++++++++++++++++++++++++++++++++GORUNTU ISLEM BASLANGIC++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
 
 
        if(firstFrame==1)
        {
            //1.FRAMEDEN NESNE(MASKIMG) GELDİ 2. FRAME ISLEDIM VE 2.FRAMEDE NESNEYI ARADIM VE NESNENIN 2.FRAMEDEKI KORDINATLARINI BULDUM
            //2. framede 1. framden aldığım nesneyi arıcam
-           tracking2->TrackingSet(imgData,480,640,coordinat[0],coordinat[1],coordinat[2],coordinat[3],25);
+           tracking2->TrackingSet(background->getBinaryOutputImg(),480,640,coordinat[0],coordinat[1],coordinat[2],coordinat[3],35);
            tracking2->cropSearchImg();
            nesne1->CannySet(tracking2->getSearchImg(),tracking2->getSearchHeight(),tracking2->getSearchWidth());
            nesne1->verticalDerivative();
@@ -146,7 +148,7 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
               }
 
            //KORDINATLARI BULDUKDAN SONRA, 2.FRAME YENI KORDINATLAR ILE ISLEDIM VE NESNEYİ 3.FRAME'E VERMEK ICIN KOPYALADIM
-          tracking1->TrackingSet( imgData,480,640,coordinat[0],coordinat[1],coordinat[2],coordinat[3],25);
+          tracking1->TrackingSet( background->getBinaryOutputImg(),480,640,coordinat[0],coordinat[1],coordinat[2],coordinat[3],35);
           tracking1->cropSearchImg();
            //1. framden hem search alanını hem mask alanını cıkardım canny uyguladım
           nesne1->CannySet(tracking1->getMaskImg(),tracking1->getMaskHeight(),tracking1->getMaskWidth());
@@ -165,7 +167,7 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
            coordinat[2]=tmpcoordinat[2];
            coordinat[3]=tmpcoordinat[3];
 
-           tracking1->TrackingSet(imgData,480,640,coordinat[0],coordinat[1],coordinat[2],coordinat[3],25);
+           tracking1->TrackingSet(background->getBinaryOutputImg(),480,640,coordinat[0],coordinat[1],coordinat[2],coordinat[3],35);
            tracking1->cropSearchImg();
 
            nesne1->CannySet(tracking1->getMaskImg(),tracking1->getMaskHeight(),tracking1->getMaskWidth());
