@@ -3,21 +3,22 @@
 
 #include <stdint.h>
 #include <math.h>
-#include <algorithm>
+
 
 class MeanShiftTracker
 {
     double *originalPdf, *pdfOfTarget;
     double gradiant[2]{0};
     uint8_t *frame;
-    int x1, y1, x2, y2, height, width;
+    int x1, y1, x2, y2, height, width, rectHeight, rectWith;
+    int radiusOfBin = 8;
 public:
     MeanShiftTracker();
     ~MeanShiftTracker();
     void setFrame(int width, int height, uint8_t* frame);
     void setArea(int x1, int y1, int x2, int y2);
     void calcOriginalPdf();
-    void calcPdfOfTarget(int x, int y, double *pdf);
+    void calcPdfOfTarget(int x, int y, uint8_t* frame, double *pdf);
     void calcGradient(uint8_t *t1);
     double bhattacharyyaCoefficient(double *p, double *q);
     double gaussianKernel(double value);

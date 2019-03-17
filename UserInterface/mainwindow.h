@@ -15,6 +15,7 @@
 #include "tracking.h"
 #include "backgroundextraction.h"
 #include "testscreen.h"
+#include "meanshifttracker.h"
 
 
 namespace Ui {
@@ -48,6 +49,7 @@ private:
     int imageProcessing=0;
     int coordinat[4]={0,0,0,0};
     int tmpcoordinat[4]={0,0,0,0};
+    uint8_t previusFrame[640*480];
     QTime time;
 
     BackgroundExtraction *background;

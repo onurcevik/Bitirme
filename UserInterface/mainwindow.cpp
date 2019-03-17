@@ -12,7 +12,6 @@ using namespace std;
 #define YRES 480
 #define SIZE 640*480*3
 
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -37,8 +36,6 @@ MainWindow::MainWindow(QWidget *parent) :
     time = QTime::currentTime();
     background = new BackgroundExtraction(640,480,50);
     deneme = new TestScreen;
-
-
 
 
 }
@@ -69,96 +66,133 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
             dataPointer+=16;
             de.setMessage(dataPointer);
         }
+        BYTE *imgData =(unsigned char*)imageBuffer->data().data();
+        imgData+=1078;
+
+        if(imageProcessing==1)
+        {
+            double a[2];
+            MeanShiftTracker tracker;
+            tracker.setFrame(640,480,imgData);
+            tracker.setArea(tmpcoordinat[0],tmpcoordinat[1],tmpcoordinat[2],tmpcoordinat[3]);
+            tracker.tracking(previusFrame, imgData, a);
+            qDebug()<< "x: " << a[0] << " y: " << a[1];
+            coordinat[0] = a[0]-abs(tmpcoordinat[0]-tmpcoordinat[2])/2;
+            coordinat[2] = a[0]+abs(tmpcoordinat[0]-tmpcoordinat[2])/2;
+            coordinat[1] = a[1]-abs(tmpcoordinat[1]-tmpcoordinat[3])/2;
+            coordinat[3] = a[1]+abs(tmpcoordinat[1]-tmpcoordinat[3])/2;
+            for(int i=coordinat[1]; i<coordinat[3]; i++)
+                {
+                    imgData[i*640+coordinat[0]] = 255;
+                    imgData[i*640+coordinat[2]]= 255;
+                }
+                for(int i=coordinat[0]; i<coordinat[2]; i++)
+                {
+                    imgData[coordinat[1]*640+i] = 255;
+                    imgData[coordinat[3]*640+i] = 255;
+                }
+        }
+
+
+        memcpy(previusFrame, imgData, 640*480);
     }
     //+++++++++++++++++++++++++++++++++++GORUNTU ISLEM BASLANGIC++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-       BYTE *imgData =(unsigned char*)imageBuffer->data().data();
-       imgData+=1078;
+//       BYTE *imgData =(unsigned char*)imageBuffer->data().data();
+//       imgData+=1078;
 
-       background->setInputImgs(imgData,frameNumber);
-       frameNumber++;
-       if(frameNumber>50)
-       {
-         background->backgroundExtraction();
-         frameNumber=1;
-      }
-       deneme->show();
-       deneme->setGrayscale(background->getOutputImg(),XRES,YRES);
-      //imgData = background->getOutputImg();
+//       double a[2];
+//       MeanShiftTracker tracker;
+//       tracker.setFrame(640,480,imgData);
+//       tracker.setArea(50,50,100,100);
+//       tracker.tracking(imgData, imgData, a);
 
+//       time.currentTime();
 
-
-
-
-       if(firstFrame==1)
-       {
-           //1.FRAMEDEN NESNE(MASKIMG) GELDİ 2. FRAME ISLEDIM VE 2.FRAMEDE NESNEYI ARADIM VE NESNENIN 2.FRAMEDEKI KORDINATLARINI BULDUM
-           //2. framede 1. framden aldığım nesneyi arıcam
-           tracking2->TrackingSet(imgData,480,640,coordinat[0],coordinat[1],coordinat[2],coordinat[3],25);
-           tracking2->cropSearchImg();
-           nesne1->CannySet(tracking2->getSearchImg(),tracking2->getSearchHeight(),tracking2->getSearchWidth());
-           nesne1->verticalDerivative();
-           nesne1->horizontalDerivative();
-           nesne1->edgeImage();
-           tracking2->setSearchImg(nesne1->nonmaximumSuppresion());
-
-          //arama ve yeni noktalar
-           tracking2->setMaskImg(tracking1->getMaskImg());
-           tracking2->createSearchMask(25,25);
-           tracking2->searchObject();
-           tracking2->newArea();
-           int *newCoordinate;
-           newCoordinate=tracking2->newArea();
-           for(int i=0; i<4; i++)
-               coordinat[i]=newCoordinate[i];
-           //cızdırme
-
-           for(int i=coordinat[1]; i<coordinat[3]; i++)
-              {
-                  imgData[i*640+coordinat[0]] = 255;
-                  imgData[i*640+coordinat[2]]= 255;
-              }
-              for(int i=coordinat[0]; i<coordinat[2]; i++)
-              {
-                  imgData[coordinat[1]*640+i] = 255;
-                  imgData[coordinat[3]*640+i] = 255;
-              }
-
-           //KORDINATLARI BULDUKDAN SONRA, 2.FRAME YENI KORDINATLAR ILE ISLEDIM VE NESNEYİ 3.FRAME'E VERMEK ICIN KOPYALADIM
-          tracking1->TrackingSet( imgData,480,640,coordinat[0],coordinat[1],coordinat[2],coordinat[3],25);
-          tracking1->cropSearchImg();
-           //1. framden hem search alanını hem mask alanını cıkardım canny uyguladım
-          nesne1->CannySet(tracking1->getMaskImg(),tracking1->getMaskHeight(),tracking1->getMaskWidth());
-          nesne1->verticalDerivative();
-          nesne1->horizontalDerivative();
-          nesne1->edgeImage();
-         tracking1->setMaskImg( nesne1->nonmaximumSuppresion());
-
-       }
-
-       //ILK FRAME
-       if(imageProcessing==1)
-       {
-           coordinat[0]=tmpcoordinat[0];
-           coordinat[1]=tmpcoordinat[1];
-           coordinat[2]=tmpcoordinat[2];
-           coordinat[3]=tmpcoordinat[3];
-
-           tracking1->TrackingSet(imgData,480,640,coordinat[0],coordinat[1],coordinat[2],coordinat[3],25);
-           tracking1->cropSearchImg();
-
-           nesne1->CannySet(tracking1->getMaskImg(),tracking1->getMaskHeight(),tracking1->getMaskWidth());
-           nesne1->verticalDerivative();
-           nesne1->horizontalDerivative();
-           nesne1->edgeImage();
-           tracking1->setMaskImg( nesne1->nonmaximumSuppresion());
+//       background->setInputImgs(imgData,frameNumber);
+//       frameNumber++;
+//       if(frameNumber>50)
+//       {
+//         background->backgroundExtraction();
+//         frameNumber=1;
+//      }
+//       deneme->show();
+//       deneme->setGrayscale(background->getOutputImg(),XRES,YRES);
+//      //imgData = background->getOutputImg();
 
 
-           firstFrame=1;
-           imageProcessing=0;
-       }
 
-       //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++GORUNTU ISLEME BITIS+++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+//       if(firstFrame==1)
+//       {
+//           //1.FRAMEDEN NESNE(MASKIMG) GELDİ 2. FRAME ISLEDIM VE 2.FRAMEDE NESNEYI ARADIM VE NESNENIN 2.FRAMEDEKI KORDINATLARINI BULDUM
+//           //2. framede 1. framden aldığım nesneyi arıcam
+//           tracking2->TrackingSet(imgData,480,640,coordinat[0],coordinat[1],coordinat[2],coordinat[3],25);
+//           tracking2->cropSearchImg();
+//           nesne1->CannySet(tracking2->getSearchImg(),tracking2->getSearchHeight(),tracking2->getSearchWidth());
+//           nesne1->verticalDerivative();
+//           nesne1->horizontalDerivative();
+//           nesne1->edgeImage();
+//           tracking2->setSearchImg(nesne1->nonmaximumSuppresion());
+
+//          //arama ve yeni noktalar
+//           tracking2->setMaskImg(tracking1->getMaskImg());
+//           tracking2->createSearchMask(25,25);
+//           tracking2->searchObject();
+//           tracking2->newArea();
+//           int *newCoordinate;
+//           newCoordinate=tracking2->newArea();
+//           for(int i=0; i<4; i++)
+//               coordinat[i]=newCoordinate[i];
+//           //cızdırme
+
+//           for(int i=coordinat[1]; i<coordinat[3]; i++)
+//              {
+//                  imgData[i*640+coordinat[0]] = 255;
+//                  imgData[i*640+coordinat[2]]= 255;
+//              }
+//              for(int i=coordinat[0]; i<coordinat[2]; i++)
+//              {
+//                  imgData[coordinat[1]*640+i] = 255;
+//                  imgData[coordinat[3]*640+i] = 255;
+//              }
+
+//           //KORDINATLARI BULDUKDAN SONRA, 2.FRAME YENI KORDINATLAR ILE ISLEDIM VE NESNEYİ 3.FRAME'E VERMEK ICIN KOPYALADIM
+//          tracking1->TrackingSet( imgData,480,640,coordinat[0],coordinat[1],coordinat[2],coordinat[3],25);
+//          tracking1->cropSearchImg();
+//           //1. framden hem search alanını hem mask alanını cıkardım canny uyguladım
+//          nesne1->CannySet(tracking1->getMaskImg(),tracking1->getMaskHeight(),tracking1->getMaskWidth());
+//          nesne1->verticalDerivative();
+//          nesne1->horizontalDerivative();
+//          nesne1->edgeImage();
+//         tracking1->setMaskImg( nesne1->nonmaximumSuppresion());
+
+//       }
+
+//       //ILK FRAME
+//       if(imageProcessing==1)
+//       {
+//           coordinat[0]=tmpcoordinat[0];
+//           coordinat[1]=tmpcoordinat[1];
+//           coordinat[2]=tmpcoordinat[2];
+//           coordinat[3]=tmpcoordinat[3];
+
+//           tracking1->TrackingSet(imgData,480,640,coordinat[0],coordinat[1],coordinat[2],coordinat[3],25);
+//           tracking1->cropSearchImg();
+
+//           nesne1->CannySet(tracking1->getMaskImg(),tracking1->getMaskHeight(),tracking1->getMaskWidth());
+//           nesne1->verticalDerivative();
+//           nesne1->horizontalDerivative();
+//           nesne1->edgeImage();
+//           tracking1->setMaskImg( nesne1->nonmaximumSuppresion());
+
+
+//           firstFrame=1;
+//           imageProcessing=0;
+//       }
+
+//       //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++GORUNTU ISLEME BITIS+++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
     //QImage img;
@@ -194,5 +228,7 @@ void MainWindow::setProcessingSettings(int x1, int y1, int x2, int y2)
     tmpcoordinat[2]=x2;
     tmpcoordinat[3]=480-y1;
     imageProcessing=1;
+
+    qDebug()<< "X: " << (tmpcoordinat[0]+tmpcoordinat[2])/2 << " Y: " << (tmpcoordinat[1]+tmpcoordinat[3])/2;
 
 }
