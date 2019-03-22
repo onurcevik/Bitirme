@@ -15,6 +15,8 @@
 #include "tracking.h"
 #include "backgroundextraction.h"
 #include "testscreen.h"
+#include "meanshifttracker.h"
+
 
 
 namespace Ui {
@@ -41,21 +43,19 @@ private:
     QGraphicsPixmapItem *item;
     QImage *img;
     Reciever *server;
-    Tracking *tracking1;
-    Tracking *tracking2;
-    Canny *nesne1;
     int firstFrame=0;
     int imageProcessing=0;
     int coordinat[4]={0,0,0,0};
     int tmpcoordinat[4]={0,0,0,0};
+    uint8_t previusFrame[640*480];
     QTime time;
-
+    int width, height;
     BackgroundExtraction *background;
     int frameNumber=1;
     TestScreen *deneme;
+    MeanShiftTracker *tracker;
+    double meanPoints[2];
     int a=0;
-
-
 };
 
 #endif // MAINWINDOW_H
