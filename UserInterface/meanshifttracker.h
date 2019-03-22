@@ -11,7 +11,9 @@ class MeanShiftTracker
     double gradiant[2]{0};
     uint8_t *frame;
     int x1, y1, x2, y2, height, width, rectHeight, rectWith;
-    int radiusOfBin = 8;
+    int radiusOfBin = 1;
+    int pdfLength;
+    bool selected = false;
 public:
     MeanShiftTracker();
     ~MeanShiftTracker();
@@ -24,7 +26,7 @@ public:
     double gaussianKernel(double value);
     double derivativeOfGaussianKernel(double value);
     int kroneckerDelta(int value);
-    void tracking(uint8_t *t0, uint8_t *t1, double *points);
+    void tracking(uint8_t *t1, double *points);
 };
 
 #endif // MEANSHIFTTRACKER_H

@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     time = QTime::currentTime();
     background = new BackgroundExtraction(640,480,50);
     deneme = new TestScreen;
-
+    tracker = new MeanShiftTracker;
 
 }
 
@@ -71,25 +71,23 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
 
         if(imageProcessing==1)
         {
-            double a[2];
-            MeanShiftTracker tracker;
-            tracker.setFrame(640,480,imgData);
-            tracker.setArea(tmpcoordinat[0],tmpcoordinat[1],tmpcoordinat[2],tmpcoordinat[3]);
-            tracker.tracking(previusFrame, imgData, a);
-            qDebug()<< "x: " << a[0] << " y: " << a[1];
-            coordinat[0] = a[0]-abs(tmpcoordinat[0]-tmpcoordinat[2])/2;
-            coordinat[2] = a[0]+abs(tmpcoordinat[0]-tmpcoordinat[2])/2;
-            coordinat[1] = a[1]-abs(tmpcoordinat[1]-tmpcoordinat[3])/2;
-            coordinat[3] = a[1]+abs(tmpcoordinat[1]-tmpcoordinat[3])/2;
-            for(int i=coordinat[1]; i<coordinat[3]; i++)
+            tracker->setFrame(640,480,previusFrame);
+            tracker->setArea(tmpcoordinat[0],tmpcoordinat[1],tmpcoordinat[2],tmpcoordinat[3]);
+            tracker->tracking(imgData, meanPoints);
+            qDebug()<< "x: " << meanPoints[0] << " y: " << meanPoints[1];
+            tmpcoordinat[0] = meanPoints[0]-width;
+            tmpcoordinat[2] = meanPoints[0]+width;
+            tmpcoordinat[1] = meanPoints[1]-height;
+            tmpcoordinat[3] = meanPoints[1]+height;
+            for(int i=tmpcoordinat[1]; i<tmpcoordinat[3]; i++)
                 {
-                    imgData[i*640+coordinat[0]] = 255;
-                    imgData[i*640+coordinat[2]]= 255;
+                    imgData[i*640+tmpcoordinat[0]] = 255;
+                    imgData[i*640+tmpcoordinat[2]]= 255;
                 }
-                for(int i=coordinat[0]; i<coordinat[2]; i++)
+                for(int i=tmpcoordinat[0]; i<tmpcoordinat[2]; i++)
                 {
-                    imgData[coordinat[1]*640+i] = 255;
-                    imgData[coordinat[3]*640+i] = 255;
+                    imgData[tmpcoordinat[1]*640+i] = 255;
+                    imgData[tmpcoordinat[3]*640+i] = 255;
                 }
         }
 
@@ -229,6 +227,8 @@ void MainWindow::setProcessingSettings(int x1, int y1, int x2, int y2)
     tmpcoordinat[3]=480-y1;
     imageProcessing=1;
 
+    height = (tmpcoordinat[3]-tmpcoordinat[1])/2;
+    width = (tmpcoordinat[2]-tmpcoordinat[0])/2;
     qDebug()<< "X: " << (tmpcoordinat[0]+tmpcoordinat[2])/2 << " Y: " << (tmpcoordinat[1]+tmpcoordinat[3])/2;
 
 }

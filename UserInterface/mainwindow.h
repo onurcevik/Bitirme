@@ -51,11 +51,12 @@ private:
     int tmpcoordinat[4]={0,0,0,0};
     uint8_t previusFrame[640*480];
     QTime time;
-
+    int width, height;
     BackgroundExtraction *background;
     int frameNumber=1;
     TestScreen *deneme;
-
+    MeanShiftTracker *tracker;
+    double meanPoints[2];
 
 };
 
