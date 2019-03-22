@@ -4,29 +4,35 @@ typedef unsigned char BYTE;
 
 class BackgroundExtraction{
 private:
-    BYTE *inputImg;
+    BYTE *inputGrayImg; //for backgroundextraction
     int width;
     int height;
     int numberOfFrame;
     BYTE *arr;
     BYTE *histogramArr;
-    BYTE *outputImg;
+    BYTE *backgroundImg;
+    BYTE *binaryOutputImg;
 
 public:
     BackgroundExtraction();
     ~BackgroundExtraction();
     BackgroundExtraction(int width, int height, int numberOfFrame);
+    //for background extraction
     void setInputImgs(BYTE *inputImgs,int frameNumber);
     int medianCalculator();
+    int backgroundExtraction();
+    //for binary img
+    void setForeground(BYTE *inputImg);
     void histogram();
+    void otsu();
     void dilation();
     void erosion();
-    void otsu();
-    int backgroundExtraction();
+    void kMeans();
 
 
-    BYTE *getInputImg() const;
-    void setInputImg(BYTE *value);
+
+    BYTE *getInputGrayImg() const;
+    void setInputGrayImg(BYTE *value);
     int getWidth() const;
     void setWidth(int value);
     int getHeight() const;
@@ -37,7 +43,9 @@ public:
     void setArr(BYTE *value);
     BYTE *getHistogramArr() const;
     void setHistogramArr(BYTE *value);
-    BYTE *getOutputImg() const;
-    void setOutputImg(BYTE *value);
+    BYTE *getBackgroundImg() const;
+    void setBackgroundImg(BYTE *value);
+    BYTE *getBinaryOutputImg() const;
+    void setBinaryOutputImg(BYTE *value);
 };
 #endif // BACKGROUNDEXTRACTION_H

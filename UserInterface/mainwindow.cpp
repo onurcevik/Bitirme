@@ -35,7 +35,10 @@ MainWindow::MainWindow(QWidget *parent) :
     tracking2 = new Tracking();
     nesne1 =new Canny();
     time = QTime::currentTime();
-    background = new BackgroundExtraction(640,480,5);
+    background = new BackgroundExtraction(640,480,50);
+    deneme = new TestScreen;
+
+
 
 
 }
@@ -51,41 +54,71 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
     imageBuffer->seek(imageBuffer->pos() - bytes);
     int speed = time.msecsTo(QTime::currentTime());
     time = QTime::currentTime();
-    speed = 1000*300/speed;
+    speed = 1000*(imageBuffer->data().size()/1024)/speed;
     ui->label->setText(QString("%1 kb/s").arg(speed));
 //    ui->label_2->setText(QString("%1 fps").arg(speed/300));
     if(ui->radioButton->isChecked())
-    {
-        uint8_t key[16] = {'a', 'y', 's', 'e', 't', 'a', 't', 'i', 'l', 'e', 'c', 'i', 'k', 's','i', 'n'};
-        uint8_t *dataPointer = (uint8_t*)imageBuffer->data().data();
-        dataPointer+=1078;
-        Decryption de(dataPointer,key,128);
-        for(int i=0;i<640*480;i+=16)
-        {
-            de.fastDecrypt();
-            dataPointer+=16;
-            de.setMessage(dataPointer);
-        }
-    }
-    //+++++++++++++++++++++++++++++++++++GORUNTU ISLEM BASLANGIC++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+           {
+               uint8_t key[16] = {'a', 'y', 's', 'e', 't', 'a', 't', 'i', 'l', 'e', 'c', 'i', 'k', 's','i', 'n'};
+               uint8_t *dataPointer = (uint8_t*)imageBuffer->data().data();
+               dataPointer+=2;
+               Decryption de(dataPointer,key,128);
+               for(int i=0;i<(imageBuffer->data().size()-4)/16;i+=16)
+               {
+                   de.fastDecrypt();
+                   dataPointer+=16;
+                   de.setMessage(dataPointer);
+               }
+       }
 
-       BYTE *imgData =(unsigned char*)imageBuffer->data().data();
-       imgData+=1078;
+    //++++++++++++++++++++++++++++++++ARKA PLAN CIKARMA ISLEMLERI++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    QPixmap pix;
+    pix.loadFromData((unsigned char*)imageBuffer->data().data(), imageBuffer->data().size(), "JPG");
+    QImage im = pix.toImage();
+    im = im.convertToFormat(QImage::Format_Grayscale8);
+    QByteArray ba;
+    QBuffer buffer(&ba);
+    im.save(&buffer,"BMP");
 
-       background->setInputImgs(imgData,frameNumber);
-       frameNumber++;
-       if(frameNumber>5)
+   BYTE *imgData =(unsigned char*)ba.data();
+   imgData+=1078;
+
+       if(a==0){
+           background->setInputImgs(imgData,frameNumber);
+           frameNumber++;
+       }
+
+       if(frameNumber>50 && a==0)
        {
          background->backgroundExtraction();
-         frameNumber=1;
+         a=1;
+         //frameNumber=1;
+       }
+      if(a==1)
+      {
+          background->setForeground(imgData);
+          background->otsu();
+          //background->kMeans();
+          background->erosion();
+          background->dilation();
+
       }
-      //imgData = background->getOutputImg();
+
+
+       deneme->show();
+       deneme->setGrayscale(background->getBinaryOutputImg(),XRES,YRES);
+
+
+    //+++++++++++++++++++++++++++++++++++GORUNTU ISLEM BASLANGIC++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+
 
        if(firstFrame==1)
        {
            //1.FRAMEDEN NESNE(MASKIMG) GELDİ 2. FRAME ISLEDIM VE 2.FRAMEDE NESNEYI ARADIM VE NESNENIN 2.FRAMEDEKI KORDINATLARINI BULDUM
            //2. framede 1. framden aldığım nesneyi arıcam
-           tracking2->TrackingSet(imgData,480,640,coordinat[0],coordinat[1],coordinat[2],coordinat[3],25);
+           tracking2->TrackingSet(background->getBinaryOutputImg(),480,640,coordinat[0],coordinat[1],coordinat[2],coordinat[3],35);
            tracking2->cropSearchImg();
            nesne1->CannySet(tracking2->getSearchImg(),tracking2->getSearchHeight(),tracking2->getSearchWidth());
            nesne1->verticalDerivative();
@@ -95,7 +128,7 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
 
           //arama ve yeni noktalar
            tracking2->setMaskImg(tracking1->getMaskImg());
-           tracking2->createSearchMask(25,25);
+           tracking2->createSearchMask(20,30);
            tracking2->searchObject();
            tracking2->newArea();
            int *newCoordinate;
@@ -116,14 +149,14 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
               }
 
            //KORDINATLARI BULDUKDAN SONRA, 2.FRAME YENI KORDINATLAR ILE ISLEDIM VE NESNEYİ 3.FRAME'E VERMEK ICIN KOPYALADIM
-          tracking1->TrackingSet( imgData,480,640,coordinat[0],coordinat[1],coordinat[2],coordinat[3],25);
+          tracking1->TrackingSet( background->getBinaryOutputImg(),480,640,coordinat[0],coordinat[1],coordinat[2],coordinat[3],35);
           tracking1->cropSearchImg();
            //1. framden hem search alanını hem mask alanını cıkardım canny uyguladım
           nesne1->CannySet(tracking1->getMaskImg(),tracking1->getMaskHeight(),tracking1->getMaskWidth());
           nesne1->verticalDerivative();
           nesne1->horizontalDerivative();
           nesne1->edgeImage();
-         tracking1->setMaskImg( nesne1->nonmaximumSuppresion());
+          tracking1->setMaskImg( nesne1->nonmaximumSuppresion());
 
        }
 
@@ -135,7 +168,7 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
            coordinat[2]=tmpcoordinat[2];
            coordinat[3]=tmpcoordinat[3];
 
-           tracking1->TrackingSet(imgData,480,640,coordinat[0],coordinat[1],coordinat[2],coordinat[3],25);
+           tracking1->TrackingSet(background->getBinaryOutputImg(),480,640,coordinat[0],coordinat[1],coordinat[2],coordinat[3],35);
            tracking1->cropSearchImg();
 
            nesne1->CannySet(tracking1->getMaskImg(),tracking1->getMaskHeight(),tracking1->getMaskWidth());
@@ -153,7 +186,7 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
 
 
     //QImage img;
-    img->loadFromData(imageBuffer->buffer());
+    img->loadFromData(ba);
     QPixmap pixmap = QPixmap::fromImage(*img);
     item->setPixmap(pixmap);
 

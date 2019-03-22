@@ -14,6 +14,7 @@
 #include "canny.h"
 #include "tracking.h"
 #include "backgroundextraction.h"
+#include "testscreen.h"
 
 
 namespace Ui {
@@ -51,6 +52,8 @@ private:
 
     BackgroundExtraction *background;
     int frameNumber=1;
+    TestScreen *deneme;
+    int a=0;
 
 
 };

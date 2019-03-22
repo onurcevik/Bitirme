@@ -2,19 +2,27 @@
 #include <algorithm>
 #include <iostream>
 #include <string.h>
+#include <QDebug>
+#include <math.h>
 using namespace std;
 
 
 BackgroundExtraction::BackgroundExtraction()
 {
-    inputImg = nullptr;
-    outputImg = nullptr;
+    inputGrayImg = nullptr;
+    arr = nullptr;
+    histogramArr = nullptr;
+    backgroundImg = nullptr;
+    binaryOutputImg = nullptr;
 }
 
 BackgroundExtraction::~BackgroundExtraction()
 {
-    delete []inputImg;
-    delete []outputImg;
+    delete []inputGrayImg;
+    delete []arr;
+    delete []histogramArr;
+    delete []backgroundImg;
+    delete []binaryOutputImg;
 }
 
 BackgroundExtraction::BackgroundExtraction(int width, int height, int numberOfFrame)
@@ -22,10 +30,11 @@ BackgroundExtraction::BackgroundExtraction(int width, int height, int numberOfFr
     this->width = width;
     this->height = height;
     this->numberOfFrame = numberOfFrame;
-    inputImg = new BYTE[width*height*numberOfFrame];
+    inputGrayImg = new BYTE[width*height*numberOfFrame];
     arr = new BYTE[numberOfFrame];
     histogramArr = new BYTE[256];
-    outputImg = new BYTE[width*height];
+    backgroundImg = new BYTE[width*height];
+    binaryOutputImg = new BYTE[width*height];
 
 }
 
@@ -34,91 +43,58 @@ void BackgroundExtraction::setInputImgs(BYTE *inputImgs, int frameNumber)
     int n = (frameNumber-1)*(width*height);
     for(int i=0; i<height*width; i++)
     {
-        inputImg[n+i]=inputImgs[i];
+        inputGrayImg[n+i]=inputImgs[i];
     }
 }
 int BackgroundExtraction::medianCalculator()
 {
-    int n = sizeof(arr)/sizeof(arr[0]);
-    sort(arr, arr+n);
+    sort(arr, arr+numberOfFrame);
     return arr[numberOfFrame/2];
 }
 
+int BackgroundExtraction::backgroundExtraction()
+{
+    //median calculator
+    int n;
+    for(int i=0; i<width*height; i++)
+    {
+        for(int j=0; j<numberOfFrame; j++)
+        {
+            n = j*(width*height);
+
+            arr[j]=inputGrayImg[n+i];
+
+        }
+         backgroundImg[i] = medianCalculator();
+    }
+}
+
+void BackgroundExtraction::setForeground(BYTE *inputImg)
+{
+    for(int i=0; i<height*width; i++)
+    {
+        binaryOutputImg[i]=(fabs(backgroundImg[i]-inputImg[i]));
+    }
+}
 void BackgroundExtraction::histogram()
 {
-    int numberofpixel = 0;
-    for (int i = 0; i<256; i++)
+    //histogramArr[256] = {0};
+    for(int i=0; i < 256; i++)
+        histogramArr[i]=0;
+
+    for (int j = 0; j< width * height; j++)
     {
-        for (int j = 0; j <= width * height; j++)
-        {
-            if (i == outputImg[j])
-            {
-                numberofpixel++;
-            }
-        }
-        histogramArr[i] = numberofpixel;
-        numberofpixel = 0;
+        histogramArr[binaryOutputImg[j]]++;
     }
-}
-
-void BackgroundExtraction::dilation()
-{
-    BYTE *tempBuffer = new BYTE[width*height];
-    memcpy(tempBuffer,outputImg, sizeof(tempBuffer));
-    int C;
-    bool result=0;
-
-    for (int i = 0; i < height; i++)
-    {
-        for (int j = 0; j < width; j++)
-        {
-            C = (i*width + j);
-            //result=(Buffer[(C - Width -1)] || Buffer[(C - Width)] || Buffer[(C - Width +1)] || Buffer[(C - 1)] || Buffer[C] || Buffer[(C + 1)] || Buffer[(C + Width - 1)] || Buffer[(C + Width)]|| Buffer[(C + Width + 1)]);
-            result = ( tempBuffer[(C - width)] || tempBuffer[(C - 1)] || tempBuffer[C] || tempBuffer[(C + 1)]  || tempBuffer[(C + width)] );
-
-
-            if (result== true)
-                outputImg[C] = 255;
-            else
-                outputImg[C] = 0;
-
-        }
-
-    }
-
-}
-
-void BackgroundExtraction::erosion()
-{
-    BYTE *tempBuffer = new BYTE[width*height];
-    memcpy(tempBuffer,outputImg, sizeof(tempBuffer));
-    int C;
-    bool result=0;
-
-    for (int i = 0; i < height; i++)
-    {
-        for (int j = 0; j < width; j++)
-        {
-            C = (i*width + j);
-            result = (tempBuffer[(C - width - 1)] && tempBuffer[(C - width)] && tempBuffer[(C - width + 1)] && tempBuffer[(C - 1)] && tempBuffer[C] && tempBuffer[(C + 1)] && tempBuffer[(C + width - 1)] && tempBuffer[(C + width)] && tempBuffer[(C + width + 1)]);
-                        //result = (Buffer[(C - Width)] && Buffer[(C - 1)] && Buffer[C] && Buffer[(C + 1)] && Buffer[(C + Width)]);
-
-
-            if (result== true)
-                outputImg[C] = 255;
-            else
-                outputImg[C] = 0;
-
-        }
-
-    }
-
 }
 
 void BackgroundExtraction::otsu()
 {
+    //histogram
     double minVariance=99999999;
     int threshold;
+    histogram();
+    //minimum thresold 1 maximum 254 olabilir
     for(int i=0; i<256; i++)
     {
         //BACKGROUND
@@ -177,43 +153,136 @@ void BackgroundExtraction::otsu()
             threshold = i;
         }
     }
+    qDebug()<<threshold;
 
     //BINARY IMG
     for (int i=0; i<width*height; i++)
     {
-        if(outputImg[i] >= threshold)
-            outputImg[i] = 255;
+        if(binaryOutputImg[i] >= threshold/2)
+            binaryOutputImg[i] = 255;
         else
-            outputImg[i] = 0;
+            binaryOutputImg[i] = 0;
     }
 
 }
 
-int BackgroundExtraction::backgroundExtraction()
+
+
+void BackgroundExtraction::dilation()
 {
-    //median calculator
-    int n;
-    for(int i=0; i<width*height; i++)
+    BYTE *tempBuffer = new BYTE[width*height];
+    //memcpy(tempBuffer,binaryOutputImg, sizeof tempBuffer);
+    for(int i=0; i<height*width; i++)
     {
-        for(int j=0; j<numberOfFrame; j++)
+        tempBuffer[i]=binaryOutputImg[i];
+    }
+    int C;
+    bool result=0;
+
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
         {
-            n = j*(width*height);
-            int a=inputImg[n+i];
-            arr[j]=inputImg[n+i];
+            C = (i*width + j);
+            //result=(Buffer[(C - Width -1)] || Buffer[(C - Width)] || Buffer[(C - Width +1)] || Buffer[(C - 1)] || Buffer[C] || Buffer[(C + 1)] || Buffer[(C + Width - 1)] || Buffer[(C + Width)]|| Buffer[(C + Width + 1)]);
+            result = ( tempBuffer[(C - width)] || tempBuffer[(C - 1)] || tempBuffer[C] || tempBuffer[(C + 1)]  || tempBuffer[(C + width)] );
+
+
+            if (result== true)
+               binaryOutputImg[C] = 255;
+            else
+                binaryOutputImg[C] = 0;
+
         }
-         outputImg[i] = medianCalculator();
-         int b=outputImg[i];
+
+    }
+
+}
+
+void BackgroundExtraction::erosion()
+{
+    BYTE *tempBuffer = new BYTE[width*height];
+    //memcpy(tempBuffer,binaryOutputImg, sizeof tempBuffer);
+    for(int i=0; i<height*width; i++)
+    {
+        tempBuffer[i]=binaryOutputImg[i];
+    }
+    int C;
+    bool result=0;
+
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            C = (i*width + j);
+            result = (tempBuffer[(C - width - 1)] && tempBuffer[(C - width)] && tempBuffer[(C - width + 1)] && tempBuffer[(C - 1)] && tempBuffer[C] && tempBuffer[(C + 1)] && tempBuffer[(C + width - 1)] && tempBuffer[(C + width)] && tempBuffer[(C + width + 1)]);
+                        //result = (Buffer[(C - Width)] && Buffer[(C - 1)] && Buffer[C] && Buffer[(C + 1)] && Buffer[(C + Width)]);
+
+
+            if (result== true)
+                binaryOutputImg[C] = 255;
+            else
+                binaryOutputImg[C] = 0;
+
+        }
+
+    }
+
+}
+
+
+void BackgroundExtraction::kMeans()
+{
+    float t1=0, t2=255, t11=-1,t22=-1;
+    double sum1 = 0, sum2 = 0;
+    double division1 = 0, division2 = 0;
+
+
+    while (true)
+    {
+        for (int i = 0; i < 256; i++)
+        {
+            if (fabs(i - t1) < fabs(i - t2))
+            {
+                sum1 += (i*histogramArr[i]);
+                division1 += histogramArr[i];
+            }
+            else
+            {
+                sum2 += (i*histogramArr[i]);
+                division2 += histogramArr[i];
+            }
+        }
+
+        t11 = sum1 / division1;
+        t22 = sum2 / division2;
+
+        if (t1 == t11 && t2 == t22)
+            break;
+
+        t1 = t11;
+        t2 = t22;
+    }
+
+    qDebug()<<t11;
+    qDebug()<<t22;
+    for (int i = 0; i < width * height; i++)
+    {
+        if (fabs(binaryOutputImg[i] - t11) < fabs(binaryOutputImg[i] - t22))
+            binaryOutputImg[i] = 0;
+        else
+            binaryOutputImg[i] = 255;
     }
 }
 
-BYTE *BackgroundExtraction::getInputImg() const
+BYTE *BackgroundExtraction::getInputGrayImg() const
 {
-    return inputImg;
+    return inputGrayImg;
 }
 
-void BackgroundExtraction::setInputImg(BYTE *value)
+void BackgroundExtraction::setInputGrayImg(BYTE *value)
 {
-    inputImg = value;
+    inputGrayImg = value;
 }
 
 int BackgroundExtraction::getWidth() const
@@ -266,12 +335,23 @@ void BackgroundExtraction::setHistogramArr(BYTE *value)
     histogramArr = value;
 }
 
-BYTE *BackgroundExtraction::getOutputImg() const
+BYTE *BackgroundExtraction::getBackgroundImg() const
 {
-    return outputImg;
+    return backgroundImg;
 }
 
-void BackgroundExtraction::setOutputImg(BYTE *value)
+void BackgroundExtraction::setBackgroundImg(BYTE *value)
 {
-    outputImg = value;
+    backgroundImg = value;
+}
+
+
+BYTE *BackgroundExtraction::getBinaryOutputImg() const
+{
+    return binaryOutputImg;
+}
+
+void BackgroundExtraction::setBinaryOutputImg(BYTE *value)
+{
+    binaryOutputImg = value;
 }
