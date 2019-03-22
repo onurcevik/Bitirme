@@ -26,14 +26,14 @@ void Tracking::TrackingSet(BYTE *img, int Height, int Width,int x1,int y1,int x2
     this->m2=x2+l;
     this->n1=y1-l;
     this->n2=y2+l;
-    if(n2>=480)
-        n2=480;
+    if(n2>=Height)
+        n2=Height;
     if(n1<=0)
         n1=0;
     if(m1<=0)
         m1=0;
-    if(m2>=640)
-        m2=640;
+    if(m2>=Width)
+        m2=Width;
 
     this->searchHeight=(n2)-(n1);
     this->searchWidth=(m2)-(m1);

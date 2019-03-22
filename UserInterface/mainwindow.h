@@ -18,6 +18,7 @@
 #include "meanshifttracker.h"
 
 
+
 namespace Ui {
 class MainWindow;
 }
@@ -42,9 +43,6 @@ private:
     QGraphicsPixmapItem *item;
     QImage *img;
     Reciever *server;
-    Tracking *tracking1;
-    Tracking *tracking2;
-    Canny *nesne1;
     int firstFrame=0;
     int imageProcessing=0;
     int coordinat[4]={0,0,0,0};
@@ -57,7 +55,7 @@ private:
     TestScreen *deneme;
     MeanShiftTracker *tracker;
     double meanPoints[2];
-
+    int a=0;
 };
 
 #endif // MAINWINDOW_H
