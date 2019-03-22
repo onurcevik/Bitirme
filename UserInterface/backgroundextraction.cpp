@@ -94,6 +94,7 @@ void BackgroundExtraction::otsu()
     double minVariance=99999999;
     int threshold;
     histogram();
+    //minimum thresold 1 maximum 254 olabilir
     for(int i=0; i<256; i++)
     {
         //BACKGROUND
@@ -157,7 +158,7 @@ void BackgroundExtraction::otsu()
     //BINARY IMG
     for (int i=0; i<width*height; i++)
     {
-        if(binaryOutputImg[i] >= threshold)
+        if(binaryOutputImg[i] >= threshold/2)
             binaryOutputImg[i] = 255;
         else
             binaryOutputImg[i] = 0;
@@ -230,7 +231,49 @@ void BackgroundExtraction::erosion()
 }
 
 
+void BackgroundExtraction::kMeans()
+{
+    float t1=0, t2=255, t11=-1,t22=-1;
+    double sum1 = 0, sum2 = 0;
+    double division1 = 0, division2 = 0;
 
+
+    while (true)
+    {
+        for (int i = 0; i < 256; i++)
+        {
+            if (fabs(i - t1) < fabs(i - t2))
+            {
+                sum1 += (i*histogramArr[i]);
+                division1 += histogramArr[i];
+            }
+            else
+            {
+                sum2 += (i*histogramArr[i]);
+                division2 += histogramArr[i];
+            }
+        }
+
+        t11 = sum1 / division1;
+        t22 = sum2 / division2;
+
+        if (t1 == t11 && t2 == t22)
+            break;
+
+        t1 = t11;
+        t2 = t22;
+    }
+
+    qDebug()<<t11;
+    qDebug()<<t22;
+    for (int i = 0; i < width * height; i++)
+    {
+        if (fabs(binaryOutputImg[i] - t11) < fabs(binaryOutputImg[i] - t22))
+            binaryOutputImg[i] = 0;
+        else
+            binaryOutputImg[i] = 255;
+    }
+}
 
 BYTE *BackgroundExtraction::getInputGrayImg() const
 {

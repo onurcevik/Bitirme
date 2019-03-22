@@ -98,6 +98,7 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
       {
           background->setForeground(imgData);
           background->otsu();
+          //background->kMeans();
           background->erosion();
           background->dilation();
 
@@ -127,7 +128,7 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
 
           //arama ve yeni noktalar
            tracking2->setMaskImg(tracking1->getMaskImg());
-           tracking2->createSearchMask(25,25);
+           tracking2->createSearchMask(20,30);
            tracking2->searchObject();
            tracking2->newArea();
            int *newCoordinate;
@@ -155,7 +156,7 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
           nesne1->verticalDerivative();
           nesne1->horizontalDerivative();
           nesne1->edgeImage();
-         tracking1->setMaskImg( nesne1->nonmaximumSuppresion());
+          tracking1->setMaskImg( nesne1->nonmaximumSuppresion());
 
        }
 

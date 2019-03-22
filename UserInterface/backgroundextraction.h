@@ -27,6 +27,7 @@ public:
     void otsu();
     void dilation();
     void erosion();
+    void kMeans();
 
 
 
