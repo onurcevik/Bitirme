@@ -41,7 +41,8 @@ SOURCES += \
     tracking.cpp \
     meanshifttracker.cpp \
     backgroundextraction.cpp \
-    testscreen.cpp
+    testscreen.cpp \
+    localbinarypattern.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -51,7 +52,8 @@ HEADERS += \
     tracking.h \
     meanshifttracker.h \
     backgroundextraction.h \
-    testscreen.h
+    testscreen.h \
+    localbinarypattern.h
 
 
 FORMS += \
