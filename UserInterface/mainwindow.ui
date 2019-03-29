@@ -36,6 +36,9 @@
     <property name="text">
      <string>Decr&amp;ypt</string>
     </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
    </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">

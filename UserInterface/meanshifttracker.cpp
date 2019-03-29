@@ -2,6 +2,11 @@
 
 
 
+void MeanShiftTracker::setSelected(bool value)
+{
+    selected = value;
+}
+
 MeanShiftTracker::MeanShiftTracker()
 {
     pdfLength = 256/radiusOfBin;
@@ -171,4 +176,7 @@ void MeanShiftTracker::tracking(uint8_t *t1, double *points)
     centerY = gradiant[1];
     t++;
     }
+    if(points[1]-(rectHeight/2)<0)
+        points[1]=(rectHeight/2);
+    else if(points[1]+(rectHeight/2)>height) points[1]=height-(rectHeight/2);
 }

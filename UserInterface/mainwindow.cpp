@@ -76,7 +76,7 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
 
    BYTE *imgData =(unsigned char*)ba.data();
    imgData+=1078;
-
+/*
        if(a==0){
            background->setInputImgs(imgData,frameNumber);
            frameNumber++;
@@ -101,7 +101,7 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
 
        deneme->show();
        deneme->setGrayscale(background->getBinaryOutputImg(),XRES,YRES);
-
+*/
 
     //+++++++++++++++++++++++++++++++++++GORUNTU ISLEM BASLANGIC++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     if(imageProcessing==1)
@@ -147,7 +147,7 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
 void MainWindow::setProcessingSettings(int x1, int y1, int x2, int y2)
 {
     firstFrame = 0;
-    imageProcessing = 1;
+    imageProcessing = 0;
 
     if(x2<x1)
     {
@@ -170,5 +170,6 @@ void MainWindow::setProcessingSettings(int x1, int y1, int x2, int y2)
     height = (tmpcoordinat[3]-tmpcoordinat[1])/2;
     width = (tmpcoordinat[2]-tmpcoordinat[0])/2;
     qDebug()<< "X: " << (tmpcoordinat[0]+tmpcoordinat[2])/2 << " Y: " << (tmpcoordinat[1]+tmpcoordinat[3])/2;
+    tracker->setSelected(false);
 
 }

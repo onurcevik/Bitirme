@@ -27,6 +27,7 @@ public:
     double derivativeOfGaussianKernel(double value);
     int kroneckerDelta(int value);
     void tracking(uint8_t *t1, double *points);
+    void setSelected(bool value);
 };
 
 #endif // MEANSHIFTTRACKER_H
