@@ -4,8 +4,8 @@ LocalBinaryPattern::LocalBinaryPattern()
 {
 
 }
-
-void BmpFile::rlbp(int * shape, int *histogram)
+/*
+void LocalBinaryPattern::rlbp(int * shape, int *histogram)
 {
     // rotate inverse local binary pattern algorithm
 
@@ -58,7 +58,7 @@ void BmpFile::rlbp(int * shape, int *histogram)
     }
 }
 
-float BmpFile::dissimilarity(int *h1, int *h2, int size, int shift)
+float LocalBinaryPattern::dissimilarity(int *h1, int *h2, int size, int shift)
 {
     // dissimilarity metric with chi-square method
     float dissimilarity = 0;
@@ -70,4 +70,4 @@ float BmpFile::dissimilarity(int *h1, int *h2, int size, int shift)
     }
     return dissimilarity;
 }
-
+*/

@@ -1,6 +1,8 @@
 #ifndef LOCALBINARYPATTERN_H
 #define LOCALBINARYPATTERN_H
 
+#include <stdint.h>
+#include <math.h>
 
 class LocalBinaryPattern
 {

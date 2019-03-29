@@ -47,6 +47,6 @@ void Reciever::receiveImage()
     QBuffer* buffer = buffers.value(socket);
     //Oku buffera yaz
     qint64 bytes = buffer->write(socket->readAll());
-
-    emit sendBuffer(buffer,bytes);
+    if(bytes!=0)
+        emit sendBuffer(buffer,bytes);
 }
