@@ -58,7 +58,7 @@ private:
     QTimer timerForFPS;
     void writeFPS();
     int countfps = 0;
-    int a=0;
+    bool backgroundStart=true;
 };
 
 #endif // MAINWINDOW_H

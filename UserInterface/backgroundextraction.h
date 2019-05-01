@@ -11,6 +11,7 @@ private:
     BYTE *arr;
     BYTE *histogramArr;
     BYTE *backgroundImg;
+    BYTE *backFrontDifferenceImg;
     BYTE *binaryOutputImg;
 
 public:
@@ -22,7 +23,7 @@ public:
     int medianCalculator();
     int backgroundExtraction();
     //for binary img
-    void setForeground(BYTE *inputImg);
+    void backFrontDifference(BYTE *inputImg);
     void histogram();
     void otsu();
     void dilation();
@@ -47,5 +48,7 @@ public:
     void setBackgroundImg(BYTE *value);
     BYTE *getBinaryOutputImg() const;
     void setBinaryOutputImg(BYTE *value);
+    BYTE *getBackFrontDifferenceImg() const;
+    void setBackFrontDifferenceImg(BYTE *value);
 };
 #endif // BACKGROUNDEXTRACTION_H

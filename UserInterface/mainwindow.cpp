@@ -73,41 +73,40 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
     QBuffer buffer(&ba);
     im.save(&buffer,"BMP");
 
-   BYTE *imgData =(unsigned char*)ba.data();
-   imgData+=1078;
-/*
-       if(a==0){
-           background->setInputImgs(imgData,frameNumber);
-           frameNumber++;
-       }
+       BYTE *imgData =(unsigned char*)ba.data();
+       imgData+=1078;
 
-       if(frameNumber>50 && a==0)
-       {
-         background->backgroundExtraction();
-         a=1;
-         //frameNumber=1;
-       }
-      if(a==1)
-      {
-          background->setForeground(imgData);
-          background->otsu();
-          //background->kMeans();
-          background->erosion();
-          background->dilation();
+           if(backgroundStart==true){
+               background->setInputImgs(imgData,frameNumber);
+               frameNumber++;
+               if(frameNumber>50 && backgroundStart==true)
+               {
+                 background->backgroundExtraction();
+                 backgroundStart=false;
+                 //frameNumber=1;
+               }
+           }
 
-      }
+          if(backgroundStart==false)
+          {
+              background->backFrontDifference(imgData);
+              //background->otsu();
+              //background->kMeans();
+              //background->erosion();
+              //background->dilation();
+
+          }
 
 
-       deneme->show();
-       deneme->setGrayscale(background->getBinaryOutputImg(),XRES,YRES);
-*/
+           deneme->show();
+           deneme->setGrayscale(background->getBackFrontDifferenceImg(),XRES,YRES);
 
     //+++++++++++++++++++++++++++++++++++GORUNTU ISLEM BASLANGIC++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     if(imageProcessing==1)
         {
             tracker->setFrame(640,480,previusFrame);
             tracker->setArea(tmpcoordinat[0],tmpcoordinat[1],tmpcoordinat[2],tmpcoordinat[3]);
-            tracker->tracking(imgData, meanPoints);
+            tracker->tracking(background->getBackFrontDifferenceImg(), meanPoints);
             qDebug()<< "x: " << meanPoints[0] << " y: " << meanPoints[1];
             tmpcoordinat[0] = meanPoints[0]-width;
             tmpcoordinat[2] = meanPoints[0]+width;
@@ -126,7 +125,7 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
         }
 
 
-        memcpy(previusFrame, imgData, 640*480);
+        memcpy(previusFrame, background->getBackFrontDifferenceImg(), 640*480);
 
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++GORUNTU ISLEME BITIS+++++++++++++++++++++++++++++++++++++++++++++++++++
 

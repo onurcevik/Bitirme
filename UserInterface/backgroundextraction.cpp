@@ -4,8 +4,8 @@
 #include <string.h>
 #include <QDebug>
 #include <math.h>
-
 using namespace std;
+
 
 
 BackgroundExtraction::BackgroundExtraction()
@@ -35,6 +35,7 @@ BackgroundExtraction::BackgroundExtraction(int width, int height, int numberOfFr
     arr = new BYTE[numberOfFrame];
     histogramArr = new BYTE[256];
     backgroundImg = new BYTE[width*height];
+    backFrontDifferenceImg = new BYTE[width*height];
     binaryOutputImg = new BYTE[width*height];
 
 }
@@ -70,11 +71,15 @@ int BackgroundExtraction::backgroundExtraction()
     }
 }
 
-void BackgroundExtraction::setForeground(BYTE *inputImg)
+void BackgroundExtraction::backFrontDifference(BYTE *inputImg)
 {
     for(int i=0; i<height*width; i++)
     {
-        binaryOutputImg[i]=(fabs(backgroundImg[i]-inputImg[i]));
+        if((fabs(backgroundImg[i]-inputImg[i]) < 20))
+                backFrontDifferenceImg[i]=0;
+         else
+                backFrontDifferenceImg[i]=inputImg[i];
+
     }
 }
 void BackgroundExtraction::histogram()
@@ -85,7 +90,7 @@ void BackgroundExtraction::histogram()
 
     for (int j = 0; j< width * height; j++)
     {
-        histogramArr[binaryOutputImg[j]]++;
+        histogramArr[backFrontDifferenceImg[j]]++;
     }
 }
 
@@ -154,12 +159,12 @@ void BackgroundExtraction::otsu()
             threshold = i;
         }
     }
-    qDebug()<<threshold;
+
 
     //BINARY IMG
     for (int i=0; i<width*height; i++)
     {
-        if(binaryOutputImg[i] >= threshold/2)
+        if(backFrontDifferenceImg[i] >= threshold/2)
             binaryOutputImg[i] = 255;
         else
             binaryOutputImg[i] = 0;
@@ -265,11 +270,9 @@ void BackgroundExtraction::kMeans()
         t2 = t22;
     }
 
-    qDebug()<<t11;
-    qDebug()<<t22;
     for (int i = 0; i < width * height; i++)
     {
-        if (fabs(binaryOutputImg[i] - t11) < fabs(binaryOutputImg[i] - t22))
+        if (fabs(backFrontDifferenceImg[i] - t11) < fabs(backFrontDifferenceImg[i] - t22))
             binaryOutputImg[i] = 0;
         else
             binaryOutputImg[i] = 255;
@@ -355,4 +358,14 @@ BYTE *BackgroundExtraction::getBinaryOutputImg() const
 void BackgroundExtraction::setBinaryOutputImg(BYTE *value)
 {
     binaryOutputImg = value;
+}
+
+BYTE *BackgroundExtraction::getBackFrontDifferenceImg() const
+{
+    return backFrontDifferenceImg;
+}
+
+void BackgroundExtraction::setBackFrontDifferenceImg(BYTE *value)
+{
+    backFrontDifferenceImg = value;
 }
