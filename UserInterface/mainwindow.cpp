@@ -34,7 +34,8 @@ MainWindow::MainWindow(QWidget *parent) :
     background = new BackgroundExtraction(640,480,50);
     deneme = new TestScreen;
     tracker = new MeanShiftTracker;
-
+    timerForFPS.start(1000);
+    connect(&timerForFPS, &QTimer::timeout, this, &MainWindow::writeFPS);
 }
 
 MainWindow::~MainWindow()
@@ -46,10 +47,8 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
 {
     //okudugun kadar geri git
     imageBuffer->seek(imageBuffer->pos() - bytes);
-    int speed = time.msecsTo(QTime::currentTime());
-    time = QTime::currentTime();
-    speed = 1000*(imageBuffer->data().size()/1024)/speed;
-    ui->label->setText(QString("%1 kb/s").arg(speed));
+    countfps++;
+//    ui->label->setText(QString("%1 kb/s").arg(speed));
 //    ui->label_2->setText(QString("%1 fps").arg(speed/300));
     if(ui->radioButton->isChecked())
        {
@@ -115,15 +114,15 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
             tmpcoordinat[1] = meanPoints[1]-height;
             tmpcoordinat[3] = meanPoints[1]+height;
             for(int i=tmpcoordinat[1]; i<tmpcoordinat[3]; i++)
-                {
+            {
                     imgData[i*640+tmpcoordinat[0]] = 255;
                     imgData[i*640+tmpcoordinat[2]]= 255;
-                }
+            }
                 for(int i=tmpcoordinat[0]; i<tmpcoordinat[2]; i++)
-                {
+            {
                     imgData[tmpcoordinat[1]*640+i] = 255;
                     imgData[tmpcoordinat[3]*640+i] = 255;
-                }
+            }
         }
 
 
@@ -172,4 +171,10 @@ void MainWindow::setProcessingSettings(int x1, int y1, int x2, int y2)
     qDebug()<< "X: " << (tmpcoordinat[0]+tmpcoordinat[2])/2 << " Y: " << (tmpcoordinat[1]+tmpcoordinat[3])/2;
     tracker->setSelected(false);
 
+}
+
+void MainWindow::writeFPS()
+{
+    ui->label->setText(QString::number(countfps));
+    countfps = 0;
 }

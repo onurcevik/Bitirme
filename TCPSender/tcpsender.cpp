@@ -75,7 +75,7 @@ void TCPSender::startSending()
 {
     startButton->setEnabled(false);
     //timer.start(1000/(24*1800));
-    timer.start(1000/48);
+    timer.start(2);
 }
 
 void TCPSender::startTestTimer()

@@ -55,6 +55,9 @@ private:
     TestScreen *deneme;
     MeanShiftTracker *tracker;
     double meanPoints[2];
+    QTimer timerForFPS;
+    void writeFPS();
+    int countfps = 0;
     int a=0;
 };
 
