@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+//    delete[] h2;
 }
 
 void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
@@ -103,27 +104,51 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
 
     //+++++++++++++++++++++++++++++++++++GORUNTU ISLEM BASLANGIC++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     if(imageProcessing==1)
+    {
+        tracker->setFrame(640,480,previusFrame);
+        tracker->setArea(tmpcoordinat[0],tmpcoordinat[1],tmpcoordinat[2],tmpcoordinat[3]);
+        tracker->tracking(background->getBackFrontDifferenceImg(), meanPoints);
+//        qDebug()<< "x: " << meanPoints[0] << " y: " << meanPoints[1];
+        tmpcoordinat[0] = meanPoints[0]-width;
+        tmpcoordinat[2] = meanPoints[0]+width;
+        tmpcoordinat[1] = meanPoints[1]-height;
+        tmpcoordinat[3] = meanPoints[1]+height;
+        for(int i=tmpcoordinat[1]; i<tmpcoordinat[3]; i++)
         {
-            tracker->setFrame(640,480,previusFrame);
-            tracker->setArea(tmpcoordinat[0],tmpcoordinat[1],tmpcoordinat[2],tmpcoordinat[3]);
-            tracker->tracking(background->getBackFrontDifferenceImg(), meanPoints);
-            qDebug()<< "x: " << meanPoints[0] << " y: " << meanPoints[1];
-            tmpcoordinat[0] = meanPoints[0]-width;
-            tmpcoordinat[2] = meanPoints[0]+width;
-            tmpcoordinat[1] = meanPoints[1]-height;
-            tmpcoordinat[3] = meanPoints[1]+height;
-            for(int i=tmpcoordinat[1]; i<tmpcoordinat[3]; i++)
-            {
-                    imgData[i*640+tmpcoordinat[0]] = 255;
-                    imgData[i*640+tmpcoordinat[2]]= 255;
-            }
-                for(int i=tmpcoordinat[0]; i<tmpcoordinat[2]; i++)
-            {
-                    imgData[tmpcoordinat[1]*640+i] = 255;
-                    imgData[tmpcoordinat[3]*640+i] = 255;
-            }
+                imgData[i*640+tmpcoordinat[0]] = 255;
+                imgData[i*640+tmpcoordinat[2]]= 255;
         }
-
+            for(int i=tmpcoordinat[0]; i<tmpcoordinat[2]; i++)
+        {
+                imgData[tmpcoordinat[1]*640+i] = 255;
+                imgData[tmpcoordinat[3]*640+i] = 255;
+        }
+    }
+    /*
+    else
+    {
+        // şeklin sol üst sağ alt koordinatları
+        int pos[4] = {235,315,275,355};
+        // boş histogram
+        int *h1 = new int[59];
+        // tüm görüntü ile lbp nesnesi oluşturulur
+        LocalBinaryPattern lbp((uint8_t*)imgData,640,480);
+        // pozisyonlar ve boş histogram arrayi verilir
+        lbp.rlbp(pos, h1);
+        // artık histogram dolu
+        // benzer adımlarla aday bölge için histogram oluşturulur
+        if(key)
+            memcpy(h2,h1,sizeof(h2)*59);
+        key = false;
+        // dissmilarity fonku ile kıyaslama yapılır,
+        // 59 histogram büyüklü, 0 ise kaydırma miktarıdır
+        // 0'dan 59'a kadar tüm durumlar denenip en küçüğü seçilir
+        // tıpkı cross corelayonda olduğu gibi kaydırarak eşleştirme yapılır
+        float tmp = lbp.dissimilarity(h1, h2, 59, 0);
+        qDebug() << "benzerlik: " << tmp;
+        delete[] h1;
+    }
+    */
 
         memcpy(previusFrame, background->getBackFrontDifferenceImg(), 640*480);
 

@@ -16,7 +16,7 @@
 #include "backgroundextraction.h"
 #include "testscreen.h"
 #include "meanshifttracker.h"
-
+#include "localbinarypattern.h"
 
 
 namespace Ui {
@@ -59,6 +59,8 @@ private:
     void writeFPS();
     int countfps = 0;
     bool backgroundStart=true;
+//    int *h2 = new int[59];
+//    bool key = true;
 };
 
 #endif // MAINWINDOW_H

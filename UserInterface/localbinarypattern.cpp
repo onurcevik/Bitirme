@@ -1,10 +1,12 @@
 #include "localbinarypattern.h"
 
-LocalBinaryPattern::LocalBinaryPattern()
+LocalBinaryPattern::LocalBinaryPattern(uint8_t *image, int width, int height)
 {
-
+    this->image = image;
+    this->width = width;
+    this->height = height;
 }
-/*
+
 void LocalBinaryPattern::rlbp(int * shape, int *histogram)
 {
     // rotate inverse local binary pattern algorithm
@@ -28,15 +30,11 @@ void LocalBinaryPattern::rlbp(int * shape, int *histogram)
 
     for (int i=0;i<59;i++) histogram[i] = 0;
 
-    int x = shape[0];
-    int y = shape[1];
-    float r = shape[2];
+    int x1 = shape[0];
+    int y1 = shape[1];
+    int x2 = shape[2];
+    int y2 = shape[3];
 
-    // following values store points of rectangle that circle be in
-    unsigned int x1 = x - r;
-    unsigned int y1 = y - r;
-    unsigned int x2 = x + r;
-    unsigned int y2 = y + r;
 
     // directions of values
     // {x1,y1,x2,y2....x8,y8}
@@ -45,12 +43,11 @@ void LocalBinaryPattern::rlbp(int * shape, int *histogram)
     {
         for(unsigned int j=y1;j<y2;j++)
         {
-            if(sqrt(pow((i - x),2) + pow((j - y),2)) > r) continue;
             int sum = 0;
             for(int k=0;k<8;k++)
             {
-                if(grayImage[i+directions[2*k]+(j+directions[2*k+1])*imageHeader->getWidth()] <
-                        grayImage[i+j*imageHeader->getWidth()]) continue;
+                if(image[i+directions[2*k]+(j+directions[2*k+1])*width] <
+                        image[i+j*width]) continue;
                 sum += pow(2,k);
             }
             histogram[index(indexs, sum)]++;
@@ -70,4 +67,4 @@ float LocalBinaryPattern::dissimilarity(int *h1, int *h2, int size, int shift)
     }
     return dissimilarity;
 }
-*/
+
