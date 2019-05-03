@@ -99,9 +99,10 @@ void MainWindow::updateGraphicsScene(QBuffer* imageBuffer,qint64 bytes)
           }
 
 
-           deneme->show();
-           deneme->setGrayscale(background->getBackFrontDifferenceImg(),XRES,YRES);
-
+          // deneme->show();
+          // deneme->setGrayscale(background->getBackFrontDifferenceImg(),XRES,YRES);
+          ui->testScreenWidget->show();
+          ui->testScreenWidget->setGrayscale(background->getBackFrontDifferenceImg(),XRES,YRES);
     //+++++++++++++++++++++++++++++++++++GORUNTU ISLEM BASLANGIC++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     if(imageProcessing==1)
     {
@@ -199,6 +200,6 @@ void MainWindow::setProcessingSettings(int x1, int y1, int x2, int y2)
 
 void MainWindow::writeFPS()
 {
-    ui->label->setText(QString::number(countfps));
+    ui->label->setText(QString::number(countfps)+" FPS");
     countfps = 0;
 }

@@ -23,7 +23,8 @@ void TestScreen::setRGB24(const unsigned char *data, int xres, int yres)
 void TestScreen::setGrayscale(const unsigned char *data, int xres, int yres)
 {
     QImage image(data,xres,yres,QImage::Format_Grayscale8);
-    QPixmap pixmap = QPixmap::fromImage(image);
+    QPixmap pixmap = QPixmap::fromImage(image.mirrored(false,true));
+    //QPixmap pixmap = QPixmap::fromImage(image);
     ui->label->setPixmap(pixmap);
 }
 

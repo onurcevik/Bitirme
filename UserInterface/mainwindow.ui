@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>798</width>
-    <height>534</height>
+    <width>1309</width>
+    <height>654</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,8 +27,8 @@
    <widget class="QRadioButton" name="radioButton">
     <property name="geometry">
      <rect>
-      <x>670</x>
-      <y>70</y>
+      <x>20</x>
+      <y>510</y>
       <width>105</width>
       <height>22</height>
      </rect>
@@ -43,14 +43,24 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>670</x>
-      <y>120</y>
+      <x>120</x>
+      <y>510</y>
       <width>59</width>
       <height>18</height>
      </rect>
     </property>
     <property name="text">
      <string/>
+    </property>
+   </widget>
+   <widget class="TestScreen" name="testScreenWidget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>20</y>
+      <width>611</width>
+      <height>481</height>
+     </rect>
     </property>
    </widget>
   </widget>
@@ -66,6 +76,12 @@
    <class>MyGraphicsView</class>
    <extends>QWidget</extends>
    <header>mygraphicsview.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TestScreen</class>
+   <extends>QWidget</extends>
+   <header location="global">testscreen.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
